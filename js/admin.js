@@ -13,7 +13,7 @@
   // Hash SHA-256 da senha padrão: alianca2025
   // Para trocar: https://emn178.github.io/online-tools/sha256.html
   // Digite a nova senha, copie o hash e cole aqui abaixo:
-  const ADMIN_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a4' // SHA-256 de 'admin123' — gere o seu em: https://emn178.github.io/online-tools/sha256.html;
+  const ADMIN_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9' // SHA-256 de 'admin123' — gere o seu em: https://emn178.github.io/online-tools/sha256.html;
   // ↑ troque esse valor pelo hash da senha real da loja
 
   // Sessão 100% em memória — F5 sempre desloga
