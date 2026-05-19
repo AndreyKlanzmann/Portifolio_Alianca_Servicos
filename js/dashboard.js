@@ -143,7 +143,29 @@ async function _dashCarregar() {
   const [di, df] = _dashPeriodoRange();
   document.getElementById('dashPeriodInfo').textContent = _ddmm(di) + ' até ' + _ddmm(df);
   if (!window.carregarAtendimentosPorPeriodo) {
-    body.innerHTML = '<div class="dash-empty">⚠️ Firebase indisponível</div>'; return;
+    // Firebase não configurado — usar dados locais da sessão
+    const local = (typeof _atendimentos !== 'undefined' ? _atendimentos : [])
+      .filter(a => a.data >= di && a.data <= df);
+    if (local.length === 0) {
+      body.innerHTML = '<div class="dash-empty" style="padding:32px 20px">' +
+        '<div style="font-size:32px;margin-bottom:12px">📊</div>' +
+        '<div style="font-size:15px;font-weight:600;margin-bottom:8px">Nenhum atendimento ainda</div>' +
+        '<div style="font-size:13px;color:var(--color-text-muted);margin-bottom:16px">Registre algumas vendas pelo carrinho e volte aqui para ver o dashboard.</div>' +
+        '<div style="background:var(--color-surface-offset);border:1px solid var(--color-border);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--color-text-muted);text-align:left;max-width:380px;margin:0 auto">' +
+        '💡 <strong>Modo demonstração</strong> — dados ficam na sessão atual.<br>' +
+        'Configure o <code>firebase.js</code> para persistência permanente entre dispositivos.' +
+        '</div>' +
+        '</div>';
+      return;
+    }
+    _dashData = local;
+    _dashRender();
+    // Mostrar aviso de modo demo
+    const aviso = document.createElement('div');
+    aviso.style.cssText = 'margin:8px 24px 0;padding:8px 12px;background:rgba(1,105,111,.08);border:1px dashed #01696f;border-radius:8px;font-size:12px;color:#01696f';
+    aviso.innerHTML = '💡 <strong>Modo demonstração</strong> — dados desta sessão. Configure o <code>firebase.js</code> para persistência permanente.';
+    document.getElementById('dashBody').prepend(aviso);
+    return;
   }
   try {
     _dashData = await window.carregarAtendimentosPorPeriodo(di, df);
