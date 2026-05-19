@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aliança — Central de Serviços</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <svg class="logo-mark" viewBox="0 0 36 36" fill="none" aria-label="Aliança">
+      <rect width="36" height="36" rx="8" fill="var(--color-primary)"/>
+      <path d="M18 7L8 26h4.5l1.8-4h7.4l1.8 4H28L18 7z" fill="white"/>
+      <path d="M15.2 18.5l2.8-6.2 2.8 6.2h-5.6z" fill="rgba(0,0,0,.25)"/>
+    </svg>
+    <span class="logo-text">Aliança <span>Serviços</span></span>
+  </div>
+  <div class="search-wrap">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="search" placeholder="Buscar serviço... (ex: IPVA, currículo, certidão)" autocomplete="off">
+  </div>
+  <div class="header-actions">
+    <button class="btn-quick" onclick="openQuickMode()" title="Modo Rápido [Q]">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Modo Rápido</span>
+    </button>
+    <button class="btn-quick" onclick="abrirEstoque()" title="Estoque de produtos" style="background:#5a3e8a">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      <span>Estoque</span>
+    </button>
+    <button class="btn-patch" onclick="openPatch()" title="Notas de atualização">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span>v3.1</span>
+    </button>
+    <button class="btn-icon" data-theme-toggle aria-label="Alternar tema">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="main">
+  <h1 class="page-title">Central de Serviços</h1>
+  <p class="page-sub">Todos os serviços com acesso direto aos sistemas. Clique em <strong>Acessar Sistema</strong> para abrir o site correspondente.</p>
+
+  <nav class="cat-nav" id="catNav">
+    <button class="cat-pill active" data-cat="all">Todos</button>
+    <button class="cat-pill" data-cat="loja" style="background:linear-gradient(135deg,#5a3e8a,#7b5db4);color:#fff;border:none">🛒 Loja</button>
+    <button class="cat-pill" data-cat="detran">Detran</button>
+    <button class="cat-pill" data-cat="mei">MEI</button>
+    <button class="cat-pill" data-cat="gov">GOV</button>
+    <button class="cat-pill" data-cat="inss">INSS</button>
+    <button class="cat-pill" data-cat="cemig">CEMIG</button>
+    <button class="cat-pill" data-cat="contas">2ª Via Contas</button>
+    <button class="cat-pill" data-cat="docs">Documentos</button>
+    <button class="cat-pill" data-cat="contratos">Contratos</button>
+    <button class="cat-pill" data-cat="inscricoes">Inscrições</button>
+    <button class="cat-pill" data-cat="trabalhos">Trabalhos/Currículo</button>
+    <button class="cat-pill" data-cat="email">E-mail e Fotos</button>
+    <button class="cat-pill" data-cat="grafica">Gráfica e Cópias</button>
+    <button class="cat-pill" data-cat="especiais">Clientes Especiais</button>
+  </nav>
+
+  <div id="sections">
+
+  <!-- DETRAN -->
+  <section class="section" data-cat="detran">
+    <div class="section-header">
+      <div class="section-icon" style="background:#e8f4f5">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#01696f" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="m16 8 5 3v5h-5V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <span class="section-title">Detran</span>
+      <span class="section-count" id="count-detran"></span>
+    </div>
+    <div class="cards-grid" id="grid-detran">
+      <!-- cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- MEI -->
+  <section class="section" data-cat="mei">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fff3e8">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#964219" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <span class="section-title">MEI</span>
+      <span class="section-count" id="count-mei"></span>
+    </div>
+    <div class="cards-grid" id="grid-mei"></div>
+  </section>
+
+  <!-- GOV -->
+  <section class="section" data-cat="gov">
+    <div class="section-header">
+      <div class="section-icon" style="background:#eaf3e8">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#437a22" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="section-title">GOV</span>
+      <span class="section-count" id="count-gov"></span>
+    </div>
+    <div class="cards-grid" id="grid-gov"></div>
+  </section>
+
+  <!-- INSS -->
+  <section class="section" data-cat="inss">
+    <div class="section-header">
+      <div class="section-icon" style="background:#e8f0ff">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <span class="section-title">INSS</span>
+      <span class="section-count" id="count-inss"></span>
+    </div>
+    <div class="cards-grid" id="grid-inss"></div>
+  </section>
+
+
+  <!-- CEMIG -->
+  <section class="section" data-cat="cemig">
+    <div class="section-header">
+      <div class="section-icon" style="background:#e6f4ea"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a7c3e" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <span class="section-title">CEMIG</span>
+      <span class="section-count" id="count-cemig"></span>
+    </div>
+    <div class="cards-grid" id="grid-cemig"><!-- cards injected by JS --></div>
+  </section>
+
+  <!-- 2ª VIA CONTAS -->
+  <section class="section" data-cat="contas">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <span class="section-title">2ª Via de Contas</span>
+      <span class="section-count" id="count-contas"></span>
+    </div>
+    <div class="cards-grid" id="grid-contas"></div>
+  </section>
+
+  <!-- DOCUMENTOS -->
+  <section class="section" data-cat="docs">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fce7f3">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a12c7b" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <span class="section-title">Documentos e Certidões</span>
+      <span class="section-count" id="count-docs"></span>
+    </div>
+    <div class="cards-grid" id="grid-docs"></div>
+  </section>
+
+  <!-- CONTRATOS -->
+  <section class="section" data-cat="contratos">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f5f0e8">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b4e2a" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+      </div>
+      <span class="section-title">Contratos e Procurações</span>
+      <span class="section-count" id="count-contratos"></span>
+    </div>
+    <div class="cards-grid" id="grid-contratos"></div>
+  </section>
+
+  <!-- INSCRIÇÕES -->
+  <section class="section" data-cat="inscricoes">
+    <div class="section-header">
+      <div class="section-icon" style="background:#e8f4f5">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#01696f" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <span class="section-title">Inscrições e Concursos</span>
+      <span class="section-count" id="count-inscricoes"></span>
+    </div>
+    <div class="cards-grid" id="grid-inscricoes"></div>
+  </section>
+
+  <!-- TRABALHOS -->
+  <section class="section" data-cat="trabalhos">
+    <div class="section-header">
+      <div class="section-icon" style="background:#eaf3e8">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#437a22" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <span class="section-title">Trabalhos, Formatação e Currículo</span>
+      <span class="section-count" id="count-trabalhos"></span>
+    </div>
+    <div class="cards-grid" id="grid-trabalhos"></div>
+  </section>
+
+  <!-- EMAIL E FOTOS -->
+  <section class="section" data-cat="email">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fff0f6">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a12c7b" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <span class="section-title">E-mail e Fotos</span>
+      <span class="section-count" id="count-email"></span>
+    </div>
+    <div class="cards-grid" id="grid-email"></div>
+  </section>
+
+  <!-- GRÁFICA -->
+  <section class="section" data-cat="grafica">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f0e8ff">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a3e8a" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      </div>
+      <span class="section-title">Gráfica e Cópias</span>
+      <span class="section-count" id="count-grafica"></span>
+    </div>
+    <div class="cards-grid" id="grid-grafica"></div>
+  </section>
+
+  <!-- ESPECIAIS -->
+  <section class="section" data-cat="especiais">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef9e7">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <span class="section-title">Clientes Especiais</span>
+      <span class="section-count" id="count-especiais"></span>
+    </div>
+    <div class="cards-grid" id="grid-especiais"></div>
+  </section>
+
+  <section class="section" data-cat="loja">
+    <div class="section-head">
+      <span class="cat-tag">🛒 Loja</span>
+      <h2 class="section-title">Produtos à Venda</h2>
+      <span class="section-count" id="count-loja">carregando...</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <input type="text" id="lojaBusca" placeholder="Buscar produto na loja..." style="flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px" oninput="_renderLoja()">
+      <select id="lojaGrupo" onchange="_renderLoja()" style="padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;background:var(--color-card)">
+        <option value="">Todos os grupos</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-muted);cursor:pointer">
+        <input type="checkbox" id="lojaSoComEstoque" onchange="_renderLoja()"> Só com estoque
+      </label>
+      <button onclick="_recarregarLoja()" class="btn-ver" style="padding:8px 12px" title="Recarregar do Firebase">↻ Atualizar</button>
+    </div>
+    <div class="cards-grid" id="grid-loja"></div>
+  </section>
+
+  </div><!-- #sections -->
+
+  <div id="emptyState" class="empty-state" style="display:none">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <h3>Nenhum serviço encontrado</h3>
+    <p>Tente outro termo de busca.</p>
+  </div>
+</main>
+
+<!-- PATCH NOTES OVERLAY -->
+<div class="overlay" id="patchOverlay" role="dialog" aria-modal="true" aria-label="Notas de atualização">
+  <div class="patch-panel">
+    <div class="patch-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-patch)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <h2>Patch Notes</h2>
+      <span class="patch-version-badge">v3.1</span>
+      <button class="patch-close" onclick="closePatch()" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="patch-body">
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v3.1</div>
+          <div class="patch-date">14 de maio de 2026</div>
+          <div class="patch-title">🚀 Sistema de Estoque + Sincronização Total (acabou a barreira do navegador)</div>
+          <ul class="patch-items">
+            <li>🔧 <b>Gráfica e Cópias arrumada:</b> impressões agora aplicam a faixa de desconto correta automaticamente (qty 5/10/25/100); corrigido bug que cobrava R$ 5 fixo em tudo. Adicionado Papel Cartão F/V e Vinil. Plastificação virou 2 cards (Pequena R$ 4 / Grande R$ 6). Cards não estouram mais o layout.</li>
+            <li>🗑️ <b>Limpar tudo:</b> botão vermelho no overlay de Estoque apaga todos os produtos do Firebase de uma vez (com confirmação dupla) — útil pra recomeçar a base do zero.</li>
+            <li>🔓 <b>Caixa sincronizado entre PCs:</b> fechamento agora vai pro Firebase — fechou no balcão, aparece fechado em todos os computadores (não depende mais de localStorage por navegador)</li>
+            <li>📦 <b>Sistema de Estoque novo:</b> botão 📦 Estoque no header abre uma planilha completa com todos os produtos, busca, filtro por grupo, badges de estoque baixo / esgotado</li>
+            <li>📅 <b>414 produtos do SMB:</b> botão "📥 Importar SMB" carrega a base inteira no Firebase de uma vez (papelaria, eletrônicos, armarinho, papel especial, artesanato) com estoque inicial</li>
+            <li>🛒 <b>Categoria Loja na Central:</b> nova aba roxa lista os produtos com preço + estoque + botão "+ Caixa" — vende como qualquer serviço</li>
+            <li>⚡ <b>Baixa automática:</b> ao finalizar atendimento, todos os produtos vendidos são descontados do estoque automaticamente no Firebase — atualiza em todos os PCs em tempo real</li>
+            <li>✅ <b>Permite estoque negativo:</b> se vender mais do que tem no sistema, marca o estoque como negativo (não trava a venda) — útil quando o estoque do SMB está desatualizado</li>
+            <li>🔴 <b>Tag ESGOTADO + alerta:</b> produtos com estoque ≤ 0 ficam com tag vermelha; abaixo do mínimo, badge amarelo de aviso</li>
+            <li>✏️ <b>Editar / Entrada manual:</b> chegou produto novo? Clique em entrada de estoque ou cadastre manualmente — fica disponível em todos os PCs na hora</li>
+            <li>📊 <b>Auditoria de movimentos:</b> nova coleção <code>estoque_movimentos</code> registra entradas e saídas com data, hora, motivo e atendimento vinculado</li>
+            <li>🔄 <b>Re-importar SMB sem duplicar:</b> usa o código do produto como ID único (Firestore merge) — pode rodar quantas vezes quiser</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.8</div>
+          <div class="patch-date">14 de maio de 2026</div>
+          <div class="patch-title">Check geral — visual refinado + otimização de performance</div>
+          <ul class="patch-items">
+            <li>🕐 13:10 — Visual: footer da aba Histórico reorganizado em 2 linhas (Total + Atendimentos em cima, ações embaixo) — sem mais quebra do preço</li>
+            <li>🕐 13:10 — Visual: ícones repetidos no footer removidos (📊 duplicado de Gráfico/CSV); cada botão agora tem ícone SVG único e rótulo</li>
+            <li>🕐 13:10 — Visual: novo badge no footer mostrando status do caixa de hoje em tempo real (○ Aberto / ✓ Fechado)</li>
+            <li>🕐 13:10 — Visual: cards de serviço reformulados — título nunca empurra o preço, preços longos viraram pill sem quebra de linha</li>
+            <li>🕐 13:10 — Performance: catalogo enorme (80+ cards) agora usa <code>content-visibility:auto</code> — navegador pula renderização de seções fora da tela (ganho real no scroll)</li>
+            <li>🕐 13:10 — Performance: busca de serviços com debounce de 150ms (não re-filtra a cada tecla, suaviza digitação rápida)</li>
+            <li>🕐 13:10 — Performance: <code>contain:layout style</code> nos cards — evita reflow em cascata quando 1 card muda</li>
+            <li>🕐 13:10 — Performance: timer de 15min (lembrete/pendências) pausa quando a aba fica em background e retoma ao voltar</li>
+            <li>🕐 13:10 — Performance: ao voltar pra aba o sistema roda check imediato em vez de esperar o próximo ciclo</li>
+            <li>🕐 13:10 — Sincronização: badge de status do caixa sincroniza entre múltiplas abas abertas via storage event</li>
+            <li>🕐 13:10 — Robustez: boot do Telegram envolto em try/catch — erro pontual numa função não derruba mais as outras</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.7</div>
+          <div class="patch-date">14 de maio de 2026</div>
+          <div class="patch-title">Fechamento inteligente de caixa — nunca mais esquecer de fechar o dia</div>
+          <ul class="patch-items">
+            <li>🕧 12:40 — Novo recurso: botão 🔒 Fechar Caixa agora é inteligente — detecta dias em aberto dos últimos 14 dias e abre modal para escolher quais fechar</li>
+            <li>🕧 12:40 — Modal de fechamento: lista cada dia com tag HOJE (azul), ABERTO (vermelho) ou FECHADO (verde, desabilitado)</li>
+            <li>🕧 12:40 — Fechamento em lote: marque vários dias atrasados com checkbox e feche todos de uma vez (com resumo no Telegram pra cada um)</li>
+            <li>🕧 12:40 — Novo recurso: banner laranja no topo do site avisa quando há caixa pendente de dias anteriores</li>
+            <li>🕧 12:40 — Banner: botão “Resolver agora” abre direto o modal de fechamento; “Dispensar” esconde o banner por 1 hora</li>
+            <li>🕧 12:40 — Novo recurso: lembrete automático no Telegram quando o caixa do dia não foi fechado até o horário configurado</li>
+            <li>🕧 12:40 — Lembrete: horário customizável na tela de configuração do Telegram (padrão 18:00) com checkbox para ativar/desativar</li>
+            <li>🕧 12:40 — Lembrete dispara segunda a sábado (pula domingo) e só envia se houver atendimentos registrados no dia</li>
+            <li>🕧 12:40 — Anti-duplicidade do lembrete: log separado garante que não envia 2 vezes no mesmo dia</li>
+            <li>🕧 12:40 — Verificação de pendências automática: ao abrir o site e a cada 15 minutos enquanto estiver aberto</li>
+            <li>🕧 12:40 — Dia HOJE em destaque visual no modal (borda azul) para diferenciar fechamento normal vs. retroativo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.6</div>
+          <div class="patch-date">14 de maio de 2026</div>
+          <div class="patch-title">Dashboard nativo + Notificações automáticas no Telegram</div>
+          <ul class="patch-items">
+            <li>🕚 12:15 — Novo recurso: Dashboard de Vendas nativo no site — KPIs, gráficos e Top 5 serviços puxando do Firebase em tempo real</li>
+            <li>🕚 12:15 — Dashboard: 4 cards de KPI (Faturamento, Atendimentos, Ticket Médio, Itens Vendidos) com cores Aliança</li>
+            <li>🕚 12:15 — Dashboard: seletor de período (Hoje, 7 dias, 30 dias, Mês atual) com atualização instantânea</li>
+            <li>🕚 12:15 — Dashboard: gráfico de linha de faturamento por dia + barras horizontais de receita por serviço (Chart.js)</li>
+            <li>🕚 12:15 — Novo botão flutuante 📈 (canto inferior direito) para abrir Dashboard a qualquer momento</li>
+            <li>🕚 12:15 — Novo recurso: integração com Telegram — envia resumos automáticos pro celular</li>
+            <li>🕚 12:15 — Telegram: tela de configuração com tutorial passo a passo (BotFather + userinfobot)</li>
+            <li>🕚 12:15 — Telegram: botão de teste antes de salvar para validar TOKEN e CHAT ID</li>
+            <li>🕚 12:15 — Telegram: credenciais salvas no localStorage do navegador (não ficam no código do GitHub Pages)</li>
+            <li>🕚 12:15 — Novo recurso: botão 🔒 Fechar Caixa do Dia — encerra o dia e envia resumo no Telegram em 1 clique</li>
+            <li>🕚 12:15 — Agendamento automático semanal: toda segunda após 8h envia resumo da semana anterior</li>
+            <li>🕚 12:15 — Agendamento automático mensal: todo dia 1º após 8h envia resumo do mês anterior</li>
+            <li>🕚 12:15 — Anti-duplicidade: log de envios em localStorage para não mandar o mesmo resumo 2 vezes</li>
+            <li>🕚 12:15 — Botões manuais no Dashboard para enviar resumo do dia, semana ou mês a qualquer momento</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.5</div>
+          <div class="patch-date">14 de maio de 2026</div>
+          <div class="patch-title">PDV completo com Firebase — histórico, sincronização e export CSV</div>
+          <ul class="patch-items">
+            <li>🕙 10:08 — Novo recurso: cancelar venda no site agora exclui também do Firebase (sincronização garantida)</li>
+            <li>🕙 10:08 — Novo recurso: histórico do site mostra apenas atendimentos do dia atual; Firebase guarda tudo permanentemente</li>
+            <li>🕙 10:08 — Novo recurso: virada automática de dia — à meia-noite o histórico do site se atualiza sozinho</li>
+            <li>🕙 10:08 — Novo recurso: badges de sincronização no histórico (⏳ salvando, ✓ salvo, ⚠ erro)</li>
+            <li>🕙 10:08 — Novo recurso: botão “✕ Cancelar” explícito em cada atendimento, com confirmação detalhada</li>
+            <li>🕙 10:08 — Fix crítico: data do atendimento agora usa fuso local (corrige bug que jogava vendas da madrugada pro dia anterior)</li>
+            <li>🕙 10:08 — Fix: exclusão no Firebase agora é transacional — se falhar a rede, o atendimento NÃO é removido do site (sem perda silenciosa)</li>
+            <li>🕙 10:15 — Novo recurso: 📅 Histórico Anterior — consulta atendimentos de dias passados direto do Firebase com filtro por período</li>
+            <li>🕙 10:15 — Histórico Anterior: presets rápidos (Hoje, Ontem, 7 dias, 30 dias) + resumo com total, média/dia e itens vendidos</li>
+            <li>🕙 10:15 — Histórico Anterior: agrupamento por dia + botão de exclusão individual por atendimento</li>
+            <li>🕙 10:15 — Novo recurso: 📊 Exportar CSV — planilha completa com 4 seções (Itens, Atendimentos, Resumo por Dia, Ranking de Serviços)</li>
+            <li>🕙 10:15 — CSV: BOM UTF-8 para acentos no Excel + separador pt-BR (ponto e vírgula) ou internacional (vírgula)</li>
+            <li>🕙 10:15 — CSV: inclui Data, Dia da Semana, Hora, Serviço, Qtd, Valor Unitário, Total do Item, Ticket Médio, % do Faturamento e Doc ID Firebase</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.4.1</div>
+          <div class="patch-date">13 de maio de 2026</div>
+          <div class="patch-title">Otimizações de performance</div>
+          <ul class="patch-items">
+            <li>🕙 08:13 — Logo base64 removida — arquivo reduzido de 560KB para 143KB (-74%)</li>
+            <li>🕙 08:13 — Estilos inline repetidos movidos para classes CSS reutilizáveis</li>
+            <li>🕙 08:13 — Comentários decorativos e espaços desnecessários removidos do CSS/JS</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.4</div>
+          <div class="patch-date">12 de maio de 2026</div>
+          <div class="patch-title">Notinha do cliente, novos serviços e Modo Rápido expandido</div>
+          <ul class="patch-items">
+            <li>🕙 16:04 — Novo recurso: Notinha do cliente — com logo Aliança Informática, itens, total e nome opcional</li>
+            <li>🕙 16:04 — Botão 🧾 Notinha disponível em cada atendimento do histórico</li>
+            <li>🕙 16:04 — Novos serviços em Gráfica: Consulta Completa R$4, Consulta Básica R$2, Papel Cartão R$4, Fotográfico R$6</li>
+            <li>🕙 16:04 — Modo Rápido: adicionados Boleto/2ª Via R$4,75, Consulta R$4, Consulta R$2 e Papel Cartão R$4</li>
+            <li>🕙 16:41 — Notinha: desconto visual por item com preço riscado, novo preço em verde e badge % de economia</li>
+            <li>🕙 16:41 — Notinha: linha de total de economia ao final quando há desconto aplicado</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.3</div>
+          <div class="patch-date">12 de maio de 2026</div>
+          <div class="patch-title">Modo Rápido, Total do Dia e Atalhos de Teclado</div>
+          <ul class="patch-items">
+            <li>🕙 14:54 — Novo recurso: Modo Rápido — grade com 10 serviços pré-setados, acesso por botão ou tecla Q</li>
+            <li>🕙 14:54 — Modo Rápido: Xerox P/B, Impressão P/B, IPVA, CRLV, Currículo, Plastif. Pequena/Grande, Foto, Multa, Imp. Colorida</li>
+            <li>🕙 14:54 — Modo Rápido: contador de quantidade em cada botão + total do atendimento em tempo real</li>
+            <li>🕙 14:54 — Novo recurso: Total do Dia — soma automática de todos os atendimentos finalizados</li>
+            <li>🕙 14:54 — Novo recurso: Atalhos de teclado — Q (Modo Rápido), C (Caixa do Dia), ESC (fechar)</li>
+            <li>🕙 15:04 — Modo Rápido: descontos por faixa aplicados automaticamente (Impressão P/B e Colorida)</li>
+            <li>🕙 15:04 — Novo recurso: Relatório PDF do dia — abre em nova aba com botão imprimir</li>
+            <li>🕙 15:04 — Novo recurso: Gráfico dos serviços mais vendidos do dia (Top 10)</li>
+            <li>🕙 15:08 — Fix: Total do dia, PDF e Gráfico movidos para aba Histórico da Caixa do Dia</li>
+            <li>🕙 15:10 — Fix: Total do dia agora atualiza corretamente ao abrir a aba Histórico</li>
+            <li>🕙 15:18 — Visual: botões do card reorganizados — Acessar em destaque, Detalhes/Copiar/Caixa iguais abaixo</li>
+            <li>🕙 15:24 — Visual: altura mínima uniforme nos cards + obs truncada em 2 linhas com reticências</li>
+            <li>🕙 15:24 — Visual: botões secundários com padding maior — mais fáceis de clicar</li>
+            <li>🕙 15:24 — Visual: mais respiro acima do título de cada seção</li>
+            <li>🕙 15:24 — Visual: botão flutuante da Caixa do Dia com sombra e borda para melhor contraste no dark mode</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.2</div>
+          <div class="patch-date">12 de maio de 2026</div>
+          <div class="patch-title">Caixa do Dia — estabilização e correções críticas</div>
+          <ul class="patch-items">
+            <li>🕙 14:31 — Fix crítico: JS do carrinho reescrito do zero — histórico, finalizar e limpar agora funcionam corretamente</li>
+            <li>🕙 14:31 — Fix: conflito com window.history do navegador resolvido</li>
+            <li>🕙 14:31 — Fix: onclick com parâmetros string quebrava o parser JS — trocado para índice numérico</li>
+            <li>🕙 14:31 — Atalhos rápidos: ⚡ Xerox P/B e ⚡ Impressão P/B disponíveis no topo do carrinho</li>
+            <li>🕙 14:31 — Botão ✕ por atendimento no histórico para excluir registros incorretos</li>
+            <li>🕙 14:35 — Fix visual: badge de versão no header atualizado para v2.2</li>
+            <li>🕙 14:35 — Multa DETRAN: 1ª via R$ 6,00 · a partir da 2ª R$ 2,50 fixo (sem desconto progressivo)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.1</div>
+          <div class="patch-date">12 de maio de 2026</div>
+          <div class="patch-title">Carrossel visual e melhoria no botão de mensagem</div>
+          <ul class="patch-items">
+            <li>🕙 09:44 — Passo a passo visual no modal: Assinatura GOV (7 passos)</li>
+            <li>🕙 09:44 — Passo a passo visual no modal: Troca de Titularidade CEMIG (5 passos)</li>
+            <li>🕙 09:44 — Botão WhatsApp substituído por "Copiar mensagem pronta"</li>
+            <li>🕙 10:06 — Etiqueta "visual" adicionada nos cards com passo a passo fotográfico</li>
+            <li>🕙 13:00 — Correção: preço longo não ultrapassa mais o card (ex: apostilas)</li>
+            <li>🕙 13:19 — Novo recurso: Caixa do Dia — carrinho com descontos automáticos por faixa de quantidade</li>
+            <li>🕙 13:28 — Caixa do Dia: atendimentos independentes com histórico, botão Finalizar e atalhos rápidos</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v2.0</div>
+          <div class="patch-date">11 de maio de 2026</div>
+          <div class="patch-title">Novos serviços, correções e recursos de WhatsApp</div>
+          <ul class="patch-items">
+            <li>🕙 10:01 — Correção: Aumento de Nível GOV (formas: Facial / Banco / QR Code da Carteira Nova)</li>
+            <li>🕙 10:01 — Correção: Extrato CNIS — formulário GOV desatualizado agora indica +R$ 5,00</li>
+            <li>🕙 10:01 — Correção: Multa DETRAN fixada em R$ 6,00 (sem desconto progressivo)</li>
+            <li>🕙 10:01 — Correção: Digitação de Texto — valor recobrado a cada 5 páginas</li>
+            <li>🕙 12:19 — Novo recurso: Botão "Enviar WhatsApp" em todos os cards</li>
+            <li>🕙 12:19 — Novo recurso: Botão "Copiar mensagem" em todos os cards</li>
+            <li>🕙 13:34 — Novo serviço: Troca de Titularidade CEMIG — R$ 50,00 (seção própria)</li>
+            <li>🕙 13:44 — Novo serviço: Alteração Cadastral INSS — R$ 20,00</li>
+            <li>🕙 13:51 — Novo serviço: SISPAR — Guia de Parcelamento Dívida Federal — R$ 6,00 (MEI)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v1.2.1</div>
+          <div class="patch-date">10 de maio de 2026 · 11:03</div>
+          <div class="patch-title">Hotfix — Valores dos serviços</div>
+          <ul class="patch-items">
+            <li>Todos os 75 serviços tiveram seus valores corrigidos conforme a planilha</li>
+            <li>Serviços com tabela de preços (impressões, plastificação) exibem faixas completas por quantidade</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v1.2</div>
+          <div class="patch-date">10 de maio de 2026 · 10:29</div>
+          <div class="patch-title">Busca inteligente</div>
+          <ul class="patch-items">
+            <li>Busca genérica: digitar "carr", "ema", "renav" já encontra os serviços relacionados</li>
+            <li>Tags invisíveis por serviço — cada serviço tem palavras-chave ocultas que entram no critério de busca</li>
+            <li>Tolerância a erro de digitação: buscas com 4+ letras aceitam 1 erro (ex: "imss" encontra INSS)</li>
+            <li>Normalização completa: acentos, hífens e pontos são ignorados na comparação</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v1.1.1</div>
+          <div class="patch-date">10 de maio de 2026 · 10:18</div>
+          <div class="patch-title">Hotfix — Correção de bugs gerais</div>
+          <ul class="patch-items">
+            <li>Filtro por categoria agora funciona corretamente</li>
+            <li>Botão X e Fechar do modal voltaram a funcionar</li>
+            <li>Dados "O que pedir" e "Observações" puxados corretamente da planilha</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div><div class="patch-line"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v1.1</div>
+          <div class="patch-date">10 de maio de 2026 · 10:06</div>
+          <div class="patch-title">Ficha de detalhes por serviço</div>
+          <ul class="patch-items">
+            <li>Botão "Ver detalhes" adicionado em cada card</li>
+            <li>Modal com "O que pedir ao cliente", "Observações / Passo a passo" e Valor</li>
+            <li>Botão "Acessar Sistema" disponível dentro do modal</li>
+            <li>Dados extraídos diretamente da planilha de serviços</li>
+          </ul>
+        </div>
+      </div>
+      <div class="patch-entry">
+        <div class="patch-timeline"><div class="patch-dot major"></div></div>
+        <div class="patch-content">
+          <div class="patch-version">v1.0</div>
+          <div class="patch-date">10 de maio de 2026 · 00:44</div>
+          <div class="patch-title">Lançamento inicial</div>
+          <ul class="patch-items">
+            <li>Painel com todos os serviços organizados por categoria</li>
+            <li>Filtro por categoria via pills clicáveis</li>
+            <li>Busca por nome e descrição do serviço</li>
+            <li>Botão "Acessar Sistema" com link direto para cada serviço</li>
+            <li>Modo escuro com identidade visual da Aliança</li>
+            <li>Patch Notes integrado ao painel</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/acesso.js"></script>
+  
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/relatorios.js"></script>
+
+<div class="svc-ov"
+
+<div class="svc-ov" id="svcOv">
+  <div class="svc-modal">
+    <div class="svc-hd">
+      <div class="svc-hd-text">
+        <div class="svc-title" id="svcTitle"></div>
+        <div class="svc-sub" id="svcSub"></div>
+      </div>
+      <button class="svc-x" id="svcClose">&#x2715;</button>
+    </div>
+    <div class="svc-body" id="svcBody"></div>
+    <div class="svc-foot" id="svcFoot"></div>
+  </div>
+</div>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- CART FAB -->
+<button class="cart-fab" onclick="openCart()" title="Carrinho">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+  <span class="cart-badge" id="cartBadge">0</span>
+</button>
+
+<!-- DASHBOARD FAB -->
+<button class="dashboard-fab" onclick="abrirDashboard()" title="Dashboard de Vendas" aria-label="Dashboard">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+</button>
+
+<style>
+.dashboard-fab{position:fixed;bottom:88px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--color-patch,#5a3e8a);color:#fff;border:2px solid rgba(255,255,255,.2);box-shadow:0 6px 20px rgba(90,62,138,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:99;transition:transform .15s ease,box-shadow .15s ease}
+.dashboard-fab:hover{transform:scale(1.08);box-shadow:0 8px 28px rgba(90,62,138,.55)}
+.dashboard-fab:active{transform:scale(.96)}
+@media(max-width:600px){.dashboard-fab{bottom:80px;right:16px;width:48px;height:48px}}
+
+.dash-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:20px;overflow-y:auto;backdrop-filter:blur(4px)}
+.dash-overlay.open{display:flex}
+.dash-panel{background:var(--color-bg,#fff);width:min(1100px,100%);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:95vh;overflow-y:auto}
+.dash-head{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid var(--color-divider,#e5e5e5);position:sticky;top:0;background:var(--color-bg,#fff);z-index:5;border-radius:16px 16px 0 0}
+.dash-head h2{margin:0;font-size:20px;font-weight:700;color:var(--color-primary,#01696F)}
+.dash-period-bar{display:flex;flex-wrap:wrap;gap:8px;padding:14px 24px;background:var(--color-surface-offset,#f5f5f5);border-bottom:1px solid var(--color-divider,#e5e5e5);align-items:center}
+.dash-period-btn{padding:6px 14px;border-radius:6px;background:var(--color-surface,#fff);border:1.5px solid var(--color-border,#ddd);cursor:pointer;font-size:12px;font-weight:600;color:var(--color-text,#222);transition:all .15s}
+.dash-period-btn.active{background:var(--color-primary,#01696F);color:#fff;border-color:var(--color-primary,#01696F)}
+.dash-period-btn:hover:not(.active){background:var(--color-surface-offset,#f5f5f5)}
+.dash-body{padding:20px 24px 28px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.kpi-card{background:var(--color-surface,#fff);border:1px solid var(--color-border,#ddd);border-radius:12px;padding:16px 18px;transition:transform .15s ease,box-shadow .15s ease}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.08)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--color-text-muted,#666);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.kpi-value{font-size:26px;font-weight:800;line-height:1.1}
+.kpi-sub{font-size:11px;color:var(--color-text-muted,#888);margin-top:6px}
+.kpi-card.teal .kpi-value{color:#01696F}
+.kpi-card.purple .kpi-value{color:#5a3e8a}
+.kpi-card.green .kpi-value{color:#437A22}
+.kpi-card.terra .kpi-value{color:#A84B2F}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:760px){.chart-grid{grid-template-columns:1fr}}
+.chart-box{background:var(--color-surface,#fff);border:1px solid var(--color-border,#ddd);border-radius:12px;padding:16px}
+.chart-box h3{margin:0 0 12px;font-size:13px;font-weight:700;color:var(--color-patch,#5a3e8a);text-transform:uppercase;letter-spacing:.4px}
+.chart-box canvas{max-height:260px}
+.top-list{list-style:none;padding:0;margin:0}
+.top-list li{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--color-divider,#eee);font-size:13px}
+.top-list li:last-child{border:none}
+.top-list .name{font-weight:600;color:var(--color-text,#222)}
+.top-list .val{font-weight:700;color:#01696F;font-variant-numeric:tabular-nums}
+.top-list .pct{font-size:11px;color:var(--color-text-muted,#888);margin-left:6px}
+.dash-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;padding:14px 24px;border-top:1px solid var(--color-divider,#e5e5e5);background:var(--color-surface-offset,#f9f9f9);border-radius:0 0 16px 16px}
+.dash-actions button{padding:8px 16px;border-radius:8px;border:1.5px solid var(--color-border,#ddd);background:var(--color-surface,#fff);cursor:pointer;font-size:13px;font-weight:600;color:var(--color-text,#222);transition:all .15s}
+.dash-actions button.primary{background:var(--color-primary,#01696F);color:#fff;border-color:var(--color-primary,#01696F)}
+.dash-actions button:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.dash-empty{text-align:center;padding:60px 20px;color:var(--color-text-muted,#888)}
+.cart-btn-finish-day{background:linear-gradient(135deg,#5a3e8a,#7b5cb8);color:#fff;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;font-weight:700;font-size:13px;width:100%;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.cart-btn-finish-day:hover{filter:brightness(1.1)}
+.notify-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.notify-status.ok{background:#d4edda;color:#155724}
+.notify-status.off{background:#f8d7da;color:#721c24}
+.notify-status.warn{background:#fff3cd;color:#856404}
+</style>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true">
+  <div class="cart-head">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-patch)" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    <h2>Caixa do Dia</h2>
+    <button class="cart-close" onclick="closeCart()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- ABAS -->
+  <div class="cart-tabs">
+    <button class="cart-tab active" id="tabCurrent" onclick="_switchTab('current')">
+      Atendimento atual <span class="cart-tab-count" id="tabCurrentCount">0</span>
+    </button>
+    <button class="cart-tab" id="tabHistory" onclick="_switchTab('history')">
+      Histórico <span class="cart-tab-count" id="tabHistCount">0</span>
+    </button>
+  </div>
+
+  <!-- ABA ATUAL -->
+  <div id="panelCurrent" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+    <!-- atalhos rápidos -->
+    <div class="cart-quick">
+      <button class="cart-quick-btn" onclick="quickAdd('Xerox P/B','0,50')">⚡ Xerox P/B</button>
+      <button class="cart-quick-btn" onclick="quickAdd('Impressão P/B (Apenas Frente) [Apostila]','2,50')">⚡ Impressão P/B</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-foot">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total do atendimento</span>
+        <span class="cart-total-val" id="cartTotal">R$ 0,00</span>
+      </div>
+      <div class="cart-actions">
+        <button class="cart-btn-finish" onclick="finishAttendance()">
+          ✓ Finalizar atendimento
+        </button>
+        <button class="cart-btn-copy" onclick="copyCart()" title="Copiar resumo">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+        <button class="cart-btn-clear" onclick="clearCart()">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA HISTÓRICO -->
+  <div id="panelHistory" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+    <div id="histItems" style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px"></div>
+    <div class="day-total-bar" id="dayTotalBar" style="margin-top:auto">
+      <div class="day-total-bar-top">
+        <div class="day-total-bar-info">
+          <span class="day-total-bar-label">Total do dia</span>
+          <span class="day-total-bar-val" id="dayTotalVal">R$ 0,00</span>
+          <span class="day-total-bar-clients" id="dayTotalClients">0 atendimentos</span>
+        </div>
+        <span id="dayCaixaStatus" class="day-total-bar-clients" style="background:#fef3c7;color:#92400e" title="Status do caixa de hoje">○ Aberto</span>
+      </div>
+      <div class="day-total-bar-actions">
+        <button class="dtba-btn" onclick="abrirDashboard()" title="Dashboard de Vendas (gráficos, KPIs, períodos)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+          Dashboard
+        </button>
+        <button class="dtba-btn" onclick="abrirHistoricoAnterior()" title="Histórico de dias anteriores (Firebase)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Histórico
+        </button>
+        <button class="dtba-btn" onclick="abrirExportCSV()" title="Exportar planilha CSV">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          CSV
+        </button>
+        <button class="dtba-btn" onclick="gerarRelatorio()" title="Relatório PDF do dia">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF
+        </button>
+      </div>
+    </div>
+    <button class="cart-btn-finish-day" onclick="fecharCaixaDoDia()" title="Encerra o dia e envia resumo no Telegram">
+      🔒 Fechar Caixa do Dia
+    </button>
+  </div>
+</div>
+
+
+<!-- MODO RÁPIDO -->
+<div class="quick-mode-overlay" id="quickModeOverlay">
+  <div class="quick-mode-head">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <h2>Modo Rápido</h2>
+    <button class="quick-mode-close" onclick="closeQuickMode()" title="Fechar [ESC]">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="quick-grid" id="quickGrid"></div>
+  <div class="quick-foot">
+    <div class="quick-foot-info">
+      <span class="quick-foot-label">Total do atendimento</span>
+      <span class="quick-foot-val" id="quickTotal">R$ 0,00</span>
+    </div>
+    <button class="quick-clear-btn" onclick="quickClear()">✕ Limpar</button>
+    <button class="quick-finish-btn" onclick="quickFinish()">✓ Finalizar</button>
+  </div>
+
+</div>
+
+<!-- HISTÓRICO ANTERIOR (DIAS PASSADOS) -->
+<div class="overlay" id="histAntOverlay" role="dialog" aria-modal="true" aria-label="Histórico anterior">
+  <div class="patch-panel" style="width:min(720px,95vw);max-height:88vh">
+    <div class="patch-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <h2>Histórico Anterior</h2>
+      <span class="patch-version-badge" style="background:var(--color-primary-highlight);color:var(--color-primary);border-color:var(--color-primary)">Firebase</span>
+      <button class="patch-close" onclick="fecharHistoricoAnterior()" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="patch-body" style="gap:var(--space-4)">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:end;background:var(--color-surface-offset);padding:12px;border-radius:8px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label for="histAntDataIni" style="font-size:11px;font-weight:600;color:var(--color-text-muted)">De</label>
+          <input type="date" id="histAntDataIni" style="padding:6px 10px;border:1.5px solid var(--color-border);border-radius:6px;background:var(--color-surface);color:var(--color-text);font-size:13px">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label for="histAntDataFim" style="font-size:11px;font-weight:600;color:var(--color-text-muted)">Até</label>
+          <input type="date" id="histAntDataFim" style="padding:6px 10px;border:1.5px solid var(--color-border);border-radius:6px;background:var(--color-surface);color:var(--color-text);font-size:13px">
+        </div>
+        <button onclick="_histAntPreset(0)" title="Hoje" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">Hoje</button>
+        <button onclick="_histAntPreset(1)" title="Ontem" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">Ontem</button>
+        <button onclick="_histAntPreset(7)" title="Últimos 7 dias" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">7 dias</button>
+        <button onclick="_histAntPreset(30)" title="Últimos 30 dias" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">30 dias</button>
+        <button onclick="buscarHistoricoAnterior()" style="padding:6px 16px;border-radius:6px;background:var(--color-primary);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;margin-left:auto">🔍 Buscar</button>
+      </div>
+      <div id="histAntResumo" style="display:none;background:#e9f3df;border:1px solid #b2d8b2;border-radius:8px;padding:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px"></div>
+      <div id="histAntLista" style="display:flex;flex-direction:column;gap:8px">
+        <div style="text-align:center;color:var(--color-text-muted);font-size:13px;padding:30px">Escolha um período e clique em Buscar</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORTAR CSV -->
+<div class="overlay" id="exportCsvOverlay" role="dialog" aria-modal="true" aria-label="Exportar CSV">
+  <div class="patch-panel" style="width:min(560px,95vw)">
+    <div class="patch-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <h2>Exportar Planilha CSV</h2>
+      <button class="patch-close" onclick="fecharExportCSV()" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="patch-body" style="gap:var(--space-4)">
+      <p style="font-size:13px;color:var(--color-text-muted);line-height:1.5">Gera uma planilha completa (.csv) compatível com Excel, Google Sheets e LibreOffice. Cada linha = 1 item vendido, com data, hora, atendimento, serviço, quantidade, valor unitário, total do item e total do atendimento.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:end;background:var(--color-surface-offset);padding:12px;border-radius:8px">
+        <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px">
+          <label for="csvDataIni" style="font-size:11px;font-weight:600;color:var(--color-text-muted)">De</label>
+          <input type="date" id="csvDataIni" style="padding:6px 10px;border:1.5px solid var(--color-border);border-radius:6px;background:var(--color-surface);color:var(--color-text);font-size:13px">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px">
+          <label for="csvDataFim" style="font-size:11px;font-weight:600;color:var(--color-text-muted)">Até</label>
+          <input type="date" id="csvDataFim" style="padding:6px 10px;border:1.5px solid var(--color-border);border-radius:6px;background:var(--color-surface);color:var(--color-text);font-size:13px">
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onclick="_csvPreset(0)" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">Hoje</button>
+        <button onclick="_csvPreset(7)" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">7 dias</button>
+        <button onclick="_csvPreset(30)" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">30 dias</button>
+        <button onclick="_csvPreset(90)" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">90 dias</button>
+        <button onclick="_csvPreset(-1)" style="padding:6px 12px;border-radius:6px;background:var(--color-surface);border:1.5px solid var(--color-border);cursor:pointer;font-size:11px;font-weight:600">Tudo</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:12px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="csvIncluirItens" checked> Incluir detalhamento de itens (linha por item)</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="csvIncluirResumo" checked> Incluir aba de resumo por dia no final</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="csvSepVirgula"> Usar vírgula como separador (padrão internacional)</label>
+      </div>
+      <div id="csvStatus" style="display:none;padding:10px;border-radius:6px;font-size:12px"></div>
+      <button onclick="exportarCSV()" id="csvBtnDownload" style="padding:10px 20px;border-radius:8px;background:var(--color-success);color:#fff;border:none;cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px">⬇ Baixar Planilha</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/firebase.js"></script>
+
+<!-- ====================================================================== -->
+<!-- DASHBOARD + TELEGRAM (v2.6) ========================================== -->
+<!-- ====================================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<!-- OVERLAY: DASHBOARD -->
+<div class="dash-overlay" id="dashOverlay" role="dialog" aria-modal="true" aria-label="Dashboard">
+  <div class="dash-panel">
+    <div class="dash-head">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <h2>Dashboard de Vendas</h2>
+      <span class="notify-status" id="tgStatus">Telegram: desconfigurado</span>
+      <button onclick="abrirConfigTelegram()" style="margin-left:auto;background:none;border:1.5px solid var(--color-border);border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;color:var(--color-text-muted)" title="Configurar Telegram">⚙️ Telegram</button>
+      <button onclick="fecharDashboard()" style="background:none;border:none;cursor:pointer;padding:6px;color:var(--color-text-muted)" aria-label="Fechar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="dash-period-bar">
+      <span style="font-size:11px;font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.5px;margin-right:6px">Período:</span>
+      <button class="dash-period-btn active" data-period="today" onclick="_dashSet('today')">Hoje</button>
+      <button class="dash-period-btn" data-period="7" onclick="_dashSet('7')">7 dias</button>
+      <button class="dash-period-btn" data-period="30" onclick="_dashSet('30')">30 dias</button>
+      <button class="dash-period-btn" data-period="month" onclick="_dashSet('month')">Mês atual</button>
+      <span style="margin-left:auto;font-size:11px;color:var(--color-text-muted)" id="dashPeriodInfo"></span>
+    </div>
+    <div class="dash-body" id="dashBody">
+      <div class="dash-empty">Carregando dados...</div>
+    </div>
+    <div class="dash-actions">
+      <button onclick="enviarResumoManual('day')">📱 Enviar Hoje no Telegram</button>
+      <button onclick="enviarResumoManual('week')">📱 Enviar Semana</button>
+      <button onclick="enviarResumoManual('month')">📱 Enviar Mês</button>
+      <button class="primary" onclick="fecharDashboard()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- BANNER DE CAIXA PENDENTE -->
+<div id="caixaPendenteBanner" style="display:none;position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,#964219,#b85a2e);color:#fff;padding:10px 20px;text-align:center;z-index:200;font-size:13px;font-weight:600;box-shadow:0 2px 12px rgba(150,66,25,.4);cursor:pointer" onclick="abrirFecharCaixaAvancado()">
+  <span id="caixaPendenteBannerTxt">⚠️ Caixa pendente</span>
+  <span style="margin-left:10px;text-decoration:underline;font-weight:700">Fechar agora →</span>
+  <button onclick="event.stopPropagation();_dispensarBanner()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:4px;padding:2px 8px;margin-left:14px;cursor:pointer;font-size:11px" title="Dispensar por 1h">✕</button>
+</div>
+
+<!-- OVERLAY: FECHAMENTO AVANÇADO (múltiplos dias) -->
+<div class="dash-overlay" id="fecharCaixaOverlay" role="dialog" aria-modal="true" aria-label="Fechar Caixa">
+  <div class="dash-panel" style="max-width:600px">
+    <div class="dash-head">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-patch)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <h2>Fechar Caixa</h2>
+      <button onclick="fecharFecharCaixaOverlay()" style="margin-left:auto;background:none;border:none;cursor:pointer;padding:6px;color:var(--color-text-muted)" aria-label="Fechar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="padding:20px 24px" id="fecharCaixaBody">
+      <div class="dash-empty">Verificando dias em aberto...</div>
+    </div>
+    <div style="padding:0 24px 16px;display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.5px">Valores do caixa físico</div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <label for="caixaMoeda" style="font-size:12px;font-weight:600;color:var(--color-text-muted)">💰 Moeda que fica (troco)</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--color-text-muted);pointer-events:none">R$</span>
+            <input id="caixaMoeda" type="number" step="0.01" min="0" placeholder="0,00" style="width:100%;padding:9px 12px 9px 36px;border:1.5px solid var(--color-border);border-radius:8px;font-size:14px;font-weight:600;background:var(--color-bg);color:var(--color-text);font-family:inherit;outline:none">
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <label for="caixaRecolhido" style="font-size:12px;font-weight:600;color:var(--color-text-muted)">💵 Valor recolhido</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--color-text-muted);pointer-events:none">R$</span>
+            <input id="caixaRecolhido" type="number" step="0.01" min="0" placeholder="0,00" style="width:100%;padding:9px 12px 9px 36px;border:1.5px solid var(--color-border);border-radius:8px;font-size:14px;font-weight:600;background:var(--color-bg);color:var(--color-text);font-family:inherit;outline:none">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-actions">
+      <button onclick="fecharFecharCaixaOverlay()">Cancelar</button>
+      <button class="primary" id="btnConfirmarFechamento" onclick="_executarFechamento()" disabled>🔒 Confirmar Fechamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY: CONFIG TELEGRAM -->
+<div class="dash-overlay" id="tgConfigOverlay" role="dialog" aria-modal="true" aria-label="Configurar Telegram">
+  <div class="dash-panel" style="max-width:560px">
+    <div class="dash-head">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#229ED9" stroke-width="2"><path d="M21.5 4.5L2.5 12l5 2 2 6.5 3.5-4.5 6.5 5L21.5 4.5z"/></svg>
+      <h2>Configurar Telegram</h2>
+      <button onclick="fecharConfigTelegram()" style="margin-left:auto;background:none;border:none;cursor:pointer;padding:6px;color:var(--color-text-muted)" aria-label="Fechar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="padding:22px 24px">
+      <div style="background:#e7f5fd;border:1px solid #b8e0fa;border-radius:8px;padding:12px;font-size:12px;color:#0c5078;margin-bottom:18px;line-height:1.5">
+        <strong>Como obter:</strong><br>
+        1. Telegram → procure <b>@BotFather</b> → <code>/newbot</code> → copie o <b>TOKEN</b>.<br>
+        2. Procure <b>@userinfobot</b> → <code>/start</code> → copie o <b>CHAT ID</b>.<br>
+        3. <b>Mande um "oi"</b> pro seu bot (senão ele não consegue te responder).
+      </div>
+      <label style="display:block;font-size:12px;font-weight:700;color:var(--color-text-muted);margin-bottom:6px">BOT TOKEN</label>
+      <input type="text" id="tgInputToken" placeholder="123456789:ABCdef..." style="width:100%;padding:10px 12px;border:1.5px solid var(--color-border);border-radius:8px;background:var(--color-surface);color:var(--color-text);font-size:13px;font-family:monospace;margin-bottom:14px">
+      <label style="display:block;font-size:12px;font-weight:700;color:var(--color-text-muted);margin-bottom:6px">CHAT ID</label>
+      <input type="text" id="tgInputChatId" placeholder="987654321" style="width:100%;padding:10px 12px;border:1.5px solid var(--color-border);border-radius:8px;background:var(--color-surface);color:var(--color-text);font-size:13px;font-family:monospace;margin-bottom:18px">
+      <div style="display:flex;gap:8px">
+        <button onclick="_tgTest()" style="flex:1;padding:10px;border-radius:8px;border:1.5px solid var(--color-border);background:var(--color-surface);cursor:pointer;font-weight:600;font-size:13px">🧪 Testar</button>
+        <button onclick="_tgSave()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#229ED9;color:#fff;cursor:pointer;font-weight:700;font-size:13px">💾 Salvar</button>
+        <button onclick="_tgClear()" style="padding:10px 14px;border-radius:8px;border:1.5px solid #dc3545;background:transparent;color:#dc3545;cursor:pointer;font-weight:600;font-size:13px">Remover</button>
+      </div>
+      <div id="tgConfigMsg" style="margin-top:14px;font-size:12px;text-align:center;min-height:18px"></div>
+      <hr style="margin:20px 0;border:none;border-top:1px solid var(--color-divider)">
+      <div style="font-size:12px;color:var(--color-text-muted);line-height:1.6">
+        <b>Resumos automáticos:</b><br>
+        • <b>Diário</b> — quando você clicar em "Fechar Caixa do Dia"<br>
+        • <b>Semanal</b> — toda <b>segunda</b> após 8h<br>
+        • <b>Mensal</b> — todo <b>dia 1º</b> após 8h<br>
+        <br>
+        <i>Os agendamentos disparam quando você abre o site. Mantém a aba aberta um pouco pra garantir o envio.</i>
+      </div>
+      <hr style="margin:16px 0;border:none;border-top:1px solid var(--color-divider)">
+      <div>
+        <b style="font-size:13px;color:var(--color-text)">🔔 Lembrete automático de fechamento</b>
+        <p style="font-size:12px;color:var(--color-text-muted);margin:6px 0 12px;line-height:1.5">Se você esquecer de fechar o caixa, manda uma mensagem no Telegram nesse horário (segunda a sábado).</p>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="time" id="tgLembreteHora" value="18:00" style="padding:8px 10px;border:1.5px solid var(--color-border);border-radius:8px;background:var(--color-surface);color:var(--color-text);font-size:13px;font-family:monospace">
+          <label style="font-size:12px;color:var(--color-text-muted);display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="checkbox" id="tgLembreteAtivo" checked> Ativar lembrete
+          </label>
+          <button onclick="_salvarLembrete()" style="margin-left:auto;padding:6px 14px;border-radius:6px;border:none;background:#229ED9;color:#fff;cursor:pointer;font-weight:700;font-size:12px">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/dashboard.js"></script>
+
+<!-- =================================================================
+     v3.0 — OVERLAY ESTOQUE + LOJA + IMPORT SMB
+     ================================================================= -->
+<div class="overlay" id="estoqueOverlay" role="dialog" aria-modal="true" aria-label="Estoque">
+  <div class="patch-panel" style="max-width:1100px;width:96vw;max-height:92vh">
+    <div class="patch-head" style="flex-wrap:wrap;gap:8px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a3e8a" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      <h2 style="margin:0;flex:1">Estoque · <span id="estoqueCount" style="font-weight:400;color:#888;font-size:13px">carregando...</span></h2>
+      <button onclick="_abrirImportSMB()" class="btn-ver" style="padding:8px 12px;background:#01696F;color:#fff;border:none" title="Importar produtos do SMB no Firebase">📥 Importar SMB</button>
+      <button onclick="_limparTodosProdutos()" class="btn-ver" style="padding:8px 12px;background:#c0392b;color:#fff;border:none" title="APAGA todos os produtos do Firebase">🗑️ Limpar tudo</button>
+      <button onclick="_abrirEditarProduto(null)" class="btn-ver" style="padding:8px 12px;background:#28a745;color:#fff;border:none">➕ Novo produto</button>
+      <button onclick="_recarregarEstoque()" class="btn-ver" style="padding:8px 12px">↻ Atualizar</button>
+      <button class="patch-close" onclick="fecharEstoque()" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--color-border);flex-wrap:wrap;background:var(--color-card)">
+      <input type="text" id="estoqueBusca" placeholder="Buscar por nome, código ou subgrupo..." oninput="_renderEstoque()" style="flex:1;min-width:220px;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px">
+      <select id="estoqueGrupo" onchange="_renderEstoque()" style="padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;background:var(--color-card)">
+        <option value="">Todos os grupos</option>
+      </select>
+      <select id="estoqueStatus" onchange="_renderEstoque()" style="padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;background:var(--color-card)">
+        <option value="">Todos</option>
+        <option value="esgotado">Esgotado / Negativo</option>
+        <option value="baixo">Estoque baixo</option>
+        <option value="positivo">Com estoque</option>
+      </select>
+    </div>
+    <div class="patch-body" id="estoqueBody" style="max-height:calc(92vh - 130px);overflow:auto;padding:0">
+      <div style="padding:40px;text-align:center;color:#888">Carregando produtos do Firebase...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Entrada de Estoque -->
+<div class="overlay" id="entradaEstoqueOverlay" role="dialog" aria-modal="true">
+  <div class="patch-panel" style="max-width:420px">
+    <div class="patch-head">
+      <h2 style="margin:0;flex:1">➕ Entrada de Estoque</h2>
+      <button class="patch-close" onclick="_fecharEntradaEstoque()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:12px;color:#666">Produto: <b id="entradaProdNome"></b><br>Estoque atual: <b id="entradaProdEstoque"></b></div>
+      <label style="font-size:12px;font-weight:600">Quantidade que chegou:</label>
+      <input type="number" id="entradaQty" value="1" min="1" style="padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:15px">
+      <label style="font-size:12px;font-weight:600">Motivo (opcional):</label>
+      <input type="text" id="entradaMotivo" placeholder="Ex: Compra fornecedor" style="padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button onclick="_fecharEntradaEstoque()" class="btn-ver">Cancelar</button>
+        <button onclick="_confirmarEntradaEstoque()" class="btn-ver" style="background:#28a745;color:#fff;border:none">✓ Confirmar entrada</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar / Criar Produto -->
+<div class="overlay" id="editarProdutoOverlay" role="dialog" aria-modal="true">
+  <div class="patch-panel" style="max-width:500px">
+    <div class="patch-head">
+      <h2 style="margin:0;flex:1" id="editarProdutoTitulo">Editar Produto</h2>
+      <button class="patch-close" onclick="_fecharEditarProduto()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="grid-column:span 2">
+        <label style="font-size:11px;font-weight:600;color:#666">Código (não pode mudar depois)</label>
+        <input type="text" id="prodCodigo" placeholder="Ex: 7894632532595" style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;margin-top:4px">
+      </div>
+      <div style="grid-column:span 2">
+        <label style="font-size:11px;font-weight:600;color:#666">Nome</label>
+        <input type="text" id="prodNome" style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;margin-top:4px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#666">Grupo</label>
+        <input type="text" id="prodGrupo" placeholder="Ex: PAPELARIA ESCOLAR" style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;margin-top:4px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#666">Subgrupo</label>
+        <input type="text" id="prodSubgrupo" style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;margin-top:4px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#666">Preço (R$)</label>
+        <input type="number" step="0.01" id="prodPreco" style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;margin-top:4px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#666">Unidade</label>
+        <input type="text" id="prodUnid" value="UN" style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;margin-top:4px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#666">Estoque atual</label>
+        <input type="number" id="prodEstoque" value="0" style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;margin-top:4px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#666">Estoque mínimo</label>
+        <input type="number" id="prodEstoqueMin" value="0" style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:13px;margin-top:4px">
+      </div>
+      <div id="prodEditMsg" style="grid-column:span 2;font-size:12px;min-height:18px"></div>
+      <div style="grid-column:span 2;display:flex;gap:8px;justify-content:space-between">
+        <button id="prodDeleteBtn" onclick="_excluirProdutoUI()" class="btn-ver" style="background:#dc3545;color:#fff;border:none;display:none">🗑️ Excluir</button>
+        <div style="display:flex;gap:8px;margin-left:auto">
+          <button onclick="_fecharEditarProduto()" class="btn-ver">Cancelar</button>
+          <button onclick="_salvarProdutoUI()" class="btn-ver" style="background:#01696F;color:#fff;border:none">✓ Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<script src="js/estoque.js"></script>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║   PATCH v3.1 — CONTROLE DE ACESSO ADMIN/OPERACIONAL         ║
+  ║   Cole IMEDIATAMENTE ANTES de <script src="js/despesas.js"></script>
+</body> no index.html          ║
+  ║                                                              ║
+  ║   PROTEGIDO (pede senha):                                    ║
+  ║   • Total do Dia (fica oculto com ••••)                      ║
+  ║   • Histórico de atendimentos do dia                         ║
+  ║   • Botão de PDF do dia                                      ║
+  ║   • Botão de Gráfico de serviços                             ║
+  ║   • Fechar Caixa / Caixa Inteligente                         ║
+  ║   • Estoque (abrir, editar, novo, importar, limpar tudo)     ║
+  ║   • Dashboard de vendas                                      ║
+  ║   • Exportar CSV                                             ║
+  ║   • Histórico Anterior (consulta dias passados)              ║
+  ║   • Configuração do Telegram                                 ║
+  ║                                                              ║
+  ║   LIVRE (sem senha):                                         ║
+  ║   • Usar o caixa normalmente / Modo Rápido                   ║
+  ║   • Ver serviços, copiar mensagem, acessar sistemas          ║
+  ║   • Adicionar ao carrinho e finalizar atendimento            ║
+  ║   • Ver notinha                                              ║
+  ║                                                              ║
+  ║   F5 / reload = sempre desloga (sessão só em memória)        ║
+  ║   SENHA PADRÃO: alianca2025                                  ║
+  ║   Para trocar: https://emn178.github.io/online-tools/sha256.html ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+
+<!-- ═══ MODAL DE SENHA ADMIN ═══ -->
+<div id="adminAuthOverlay" role="dialog" aria-modal="true" aria-label="Autenticação Admin" style="
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6);
+  z-index:99999; align-items:center; justify-content:center;
+">
+  <div style="
+    background:var(--color-surface,#fff); border-radius:16px; padding:28px 28px 24px;
+    max-width:360px; width:calc(100% - 32px);
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    display:flex; flex-direction:column; gap:14px;
+    animation: adminFadeIn .18s ease;
+  ">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="
+        width:36px; height:36px; border-radius:10px;
+        background:var(--color-primary-highlight,#cedcd8);
+        display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      ">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary,#01696f)" stroke-width="2.2">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-size:15px; font-weight:700; color:var(--color-text);">Acesso Admin</div>
+        <div style="font-size:12px; color:var(--color-text-muted,#666);">Essa ação requer senha de administrador</div>
+      </div>
+    </div>
+    <input
+      id="adminPasswordInput"
+      type="password"
+      placeholder="Senha de administrador"
+      autocomplete="off"
+      style="
+        padding:11px 14px; border:1.5px solid var(--color-border,#ddd);
+        border-radius:10px; font-size:14px; width:100%; box-sizing:border-box;
+        background:var(--color-bg,#f7f6f2); color:var(--color-text);
+        outline:none; transition:border-color .2s;
+      "
+      onkeydown="if(event.key==='Enter')window._confirmAdminAuth()"
+      oninput="document.getElementById('adminAuthMsg').textContent=''"
+      onfocus="this.style.borderColor='var(--color-primary,#01696f)'"
+      onblur="this.style.borderColor='var(--color-border,#ddd)'"
+    />
+    <div id="adminAuthMsg" style="font-size:12px; color:var(--color-error,#a12c7b); min-height:14px; margin-top:-6px;"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button onclick="window._cancelAdminAuth()" style="
+        padding:9px 18px; border-radius:9px; border:1px solid var(--color-border,#ddd);
+        background:none; cursor:pointer; font-size:13px; color:var(--color-text-muted);
+        transition: background .15s;
+      " onmouseover="this.style.background='var(--color-surface-offset)'" onmouseout="this.style.background='none'">Cancelar</button>
+      <button onclick="window._confirmAdminAuth()" style="
+        padding:9px 22px; border-radius:9px; border:none;
+        background:var(--color-primary,#01696f); color:#fff;
+        cursor:pointer; font-size:13px; font-weight:700;
+        transition: background .15s;
+      " onmouseover="this.style.background='var(--color-primary-hover,#0c4e54)'" onmouseout="this.style.background='var(--color-primary,#01696f)'">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes adminFadeIn {
+  from { opacity:0; transform:scale(.96) translateY(8px); }
+  to   { opacity:1; transform:scale(1)   translateY(0); }
+}
+/* Área de total/histórico oculta quando não é admin */
+.admin-hidden {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+  position: relative;
+}
+.admin-hidden::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+.admin-unlock-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px dashed var(--color-border);
+  transition: all .15s;
+  background: var(--color-surface);
+  margin-top: 4px;
+}
+.admin-unlock-hint:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+</style>
+
+<script src="js/despesas.js"></script>
+<script src="js/admin.js"></script>
+<!-- ═══ FIM DO PATCH v3.1 ═══ -->
+</body>
+
+</html>

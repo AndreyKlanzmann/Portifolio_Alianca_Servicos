@@ -1,0 +1,134 @@
+/* ===========================
+   ALIANÇA — BASE & LAYOUT
+   =========================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: background var(--transition), color var(--transition);
+}
+
+button, input { font: inherit; color: inherit; }
+a { text-decoration: none; color: inherit; }
+
+/* --- HEADER --- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-divider);
+  padding: var(--space-3) var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.logo { display: flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
+.logo-mark { width: 36px; height: 36px; }
+.logo-text { font-family: var(--font-display); font-size: 1.25rem; letter-spacing: -.01em; }
+.logo-text span { color: var(--color-primary); }
+
+.search-wrap { flex: 1; max-width: 520px; position: relative; }
+.search-wrap input {
+  width: 100%;
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-10);
+  background: var(--color-surface-offset);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.search-wrap input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-highlight);
+}
+.search-icon {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: var(--space-2); }
+
+/* --- MAIN --- */
+.main { max-width: 1280px; margin: 0 auto; padding: var(--space-8) var(--space-6); }
+.page-title { font-family: var(--font-display); font-size: var(--text-xl); margin-bottom: var(--space-2); }
+.page-sub { color: var(--color-text-muted); font-size: var(--text-sm); margin-bottom: var(--space-8); }
+
+/* --- CATEGORIAS --- */
+.cat-nav { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-8); }
+
+/* --- SEÇÕES --- */
+.section {
+  margin-bottom: var(--space-10);
+  padding-top: var(--space-6);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+}
+.section-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.section-title { font-weight: 700; font-size: var(--text-lg); }
+.section-count {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: var(--color-surface-offset);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  margin-left: auto;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: var(--space-4);
+}
+
+.section.hidden, .card.hidden { display: none; }
+
+/* --- EMPTY STATE --- */
+.empty-state { text-align: center; padding: var(--space-16) var(--space-8); color: var(--color-text-muted); }
+.empty-state svg { margin: 0 auto var(--space-4); color: var(--color-text-faint); }
+.empty-state h3 { font-size: var(--text-lg); color: var(--color-text); margin-bottom: var(--space-2); }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 640px) {
+  .header { padding: var(--space-3); flex-wrap: wrap; gap: var(--space-2); }
+  .search-wrap { order: 3; width: 100%; max-width: 100%; }
+  .main { padding: var(--space-6) var(--space-4); }
+  .btn-patch span { display: none; }
+}
