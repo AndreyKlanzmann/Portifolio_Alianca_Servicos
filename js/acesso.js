@@ -4,7 +4,7 @@
    =========================== */
 
 (function () {
-  var SENHA = 'senha123' // troque pela sua senha;
+  var SENHA = 'demo123';
   var CHAVE = 'alianca_acesso_v1';
   var DURACAO = 8 * 60 * 60 * 1000; // 8 horas em ms
 
@@ -61,7 +61,10 @@
             'Senha incorreta. Tente novamente.',
           '</div>',
 
-          '<button id="acessoBtn" style="',
+          '<div style="margin-top:8px;padding:8px 12px;background:rgba(1,105,111,.08);border:1px dashed #01696f;border-radius:8px;text-align:center">' +
+      '<span style="font-size:11px;color:#01696f;font-weight:600">🔑 Demonstração — senha: <code style="background:rgba(1,105,111,.15);padding:1px 6px;border-radius:4px;font-size:12px">demo123</code></span>' +
+      '</div>' +
+      '<button id="acessoBtn" style="',
             'width:100%;padding:11px;border-radius:8px;border:none;cursor:pointer;',
             'background:#01696f;color:#fff;font-size:.95rem;font-weight:600;',
             'font-family:inherit;transition:background .15s',
