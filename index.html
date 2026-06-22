@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aliança — Central de Serviços</title>
+<title>PDV Demo — Sistema de Gestão</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -15,14 +15,19 @@
 </head>
 <body>
 
+<div id="demoBanner" style="position:sticky;top:0;z-index:9998;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(90deg,var(--color-primary,#01696f),var(--color-primary-hover,#0c4e54));color:#fff;font-size:13px;font-weight:600;padding:8px 16px;text-align:center">
+  <span>⚡ Modo demonstração — dados resetam ao recarregar</span>
+  <button onclick="document.getElementById('demoBanner').style.display='none'" aria-label="Fechar aviso" style="background:rgba(255,255,255,.18);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:13px;line-height:1;flex-shrink:0">✕</button>
+</div>
+
 <header class="header">
   <div class="logo">
-    <svg class="logo-mark" viewBox="0 0 36 36" fill="none" aria-label="Aliança">
+    <svg class="logo-mark" viewBox="0 0 36 36" fill="none" aria-label="PDV Demo">
       <rect width="36" height="36" rx="8" fill="var(--color-primary)"/>
       <path d="M18 7L8 26h4.5l1.8-4h7.4l1.8 4H28L18 7z" fill="white"/>
       <path d="M15.2 18.5l2.8-6.2 2.8 6.2h-5.6z" fill="rgba(0,0,0,.25)"/>
     </svg>
-    <span class="logo-text">Aliança <span>Serviços</span></span>
+    <span class="logo-text">PDV <span>Demo</span></span>
   </div>
   <div class="search-wrap">
     <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -39,7 +44,7 @@
     </button>
     <button class="btn-patch" onclick="openPatch()" title="Notas de atualização">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      <span>v3.1</span>
+      <span>v3.3</span>
     </button>
     <button class="btn-icon" data-theme-toggle aria-label="Alternar tema">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -262,7 +267,7 @@
     <div class="patch-head">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-patch)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       <h2>Patch Notes</h2>
-      <span class="patch-version-badge">v3.1</span>
+      <span class="patch-version-badge">v3.3</span>
       <button class="patch-close" onclick="closePatch()" aria-label="Fechar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -340,7 +345,7 @@
           <div class="patch-title">Dashboard nativo + Notificações automáticas no Telegram</div>
           <ul class="patch-items">
             <li>🕚 12:15 — Novo recurso: Dashboard de Vendas nativo no site — KPIs, gráficos e Top 5 serviços puxando do Firebase em tempo real</li>
-            <li>🕚 12:15 — Dashboard: 4 cards de KPI (Faturamento, Atendimentos, Ticket Médio, Itens Vendidos) com cores Aliança</li>
+            <li>🕚 12:15 — Dashboard: 4 cards de KPI (Faturamento, Atendimentos, Ticket Médio, Itens Vendidos) com cores do tema</li>
             <li>🕚 12:15 — Dashboard: seletor de período (Hoje, 7 dias, 30 dias, Mês atual) com atualização instantânea</li>
             <li>🕚 12:15 — Dashboard: gráfico de linha de faturamento por dia + barras horizontais de receita por serviço (Chart.js)</li>
             <li>🕚 12:15 — Novo botão flutuante 📈 (canto inferior direito) para abrir Dashboard a qualquer momento</li>
@@ -399,7 +404,7 @@
           <div class="patch-date">12 de maio de 2026</div>
           <div class="patch-title">Notinha do cliente, novos serviços e Modo Rápido expandido</div>
           <ul class="patch-items">
-            <li>🕙 16:04 — Novo recurso: Notinha do cliente — com logo Aliança Informática, itens, total e nome opcional</li>
+            <li>🕙 16:04 — Novo recurso: Notinha do cliente — com logo da loja, itens, total e nome opcional</li>
             <li>🕙 16:04 — Botão 🧾 Notinha disponível em cada atendimento do histórico</li>
             <li>🕙 16:04 — Novos serviços em Gráfica: Consulta Completa R$4, Consulta Básica R$2, Papel Cartão R$4, Fotográfico R$6</li>
             <li>🕙 16:04 — Modo Rápido: adicionados Boleto/2ª Via R$4,75, Consulta R$4, Consulta R$2 e Papel Cartão R$4</li>
@@ -550,7 +555,7 @@
             <li>Filtro por categoria via pills clicáveis</li>
             <li>Busca por nome e descrição do serviço</li>
             <li>Botão "Acessar Sistema" com link direto para cada serviço</li>
-            <li>Modo escuro com identidade visual da Aliança</li>
+            <li>Modo escuro com identidade visual própria</li>
             <li>Patch Notes integrado ao painel</li>
           </ul>
         </div>
@@ -825,7 +830,7 @@
   </div>
 </div>
 
-<script type="module" src="js/firebase.js"></script>
+<script src="js/firebase.js"></script>
 
 <!-- ====================================================================== -->
 <!-- DASHBOARD + TELEGRAM (v2.6) ========================================== -->
@@ -1073,6 +1078,7 @@
 </div>
   
 <script src="js/estoque.js"></script>
+<script src="js/clientes.js"></script>
 <!--
   ╔══════════════════════════════════════════════════════════════╗
   ║   PATCH v3.1 — CONTROLE DE ACESSO ADMIN/OPERACIONAL         ║
@@ -1098,7 +1104,7 @@
   ║   • Ver notinha                                              ║
   ║                                                              ║
   ║   F5 / reload = sempre desloga (sessão só em memória)        ║
-  ║   SENHA PADRÃO: alianca2025                                  ║
+  ║   SENHA PADRÃO: admin123                                     ║
   ║   Para trocar: https://emn178.github.io/online-tools/sha256.html ║
   ╚══════════════════════════════════════════════════════════════╝
 -->
