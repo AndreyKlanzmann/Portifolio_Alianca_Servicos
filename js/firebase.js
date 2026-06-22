@@ -1,41 +1,99 @@
 /* ===========================
-   ALIANÇA — FIREBASE
+   PDV DEMO — FIREBASE (mock em memória)
+   Simula a API do Firestore usada pelo sistema.
+   Não faz nenhuma requisição de rede — os dados
+   existem apenas nestes arrays em memória e
+   resetam ao recarregar a página.
    =========================== */
+(function () {
+  'use strict';
 
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    getDocs,
-    query,
-    where,
-    orderBy,
-    deleteDoc,
-    doc,
-    setDoc,
-    updateDoc,
-    increment,
-    writeBatch,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+  function _uid(prefix) {
+    return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+  function _todayISO() {
+    var d = new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
 
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.firebasestorage.app",
-    messagingSenderId: "000000000000",
-    appId: "1:000000000000:web:000000000000"
-  };
+  // ── "Coleções" em memória ──────────────────────────────────────
+  var _dbAtendimentos = [];
+  var _dbProdutos = [];
+  var _dbEstoqueMovimentos = [];
+  var _dbCaixaFechamentos = {};
+  var _dbDespesas = [];
+  var _dbClientes = [];
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // ── Seed: atendimentos fictícios de hoje ────────────────────────
+  (function seedAtendimentos() {
+    var hoje = _todayISO();
+    var seeds = [
+      { time: '08:45', name: 'IPVA', qty: 1, tot: 6.00 },
+      { time: '09:10', name: '2ª Via CEMIG', qty: 1, tot: 4.75 },
+      { time: '09:50', name: 'Xerox P/B', qty: 3, tot: 7.50 },
+      { time: '10:30', name: 'Currículo Personalizado', qty: 1, tot: 15.00 },
+      { time: '11:20', name: 'Troca de Titularidade CEMIG', qty: 1, tot: 50.00 }
+    ];
+    seeds.forEach(function (s, i) {
+      _dbAtendimentos.push({
+        _docId: _uid('aten'),
+        id: i + 1,
+        time: s.time,
+        items: [{ name: s.name, qty: s.qty, tot: s.tot }],
+        total: s.tot,
+        data: hoje,
+        hora: s.time,
+        vendedor: 'Demo',
+        criadoEm: new Date().toISOString()
+      });
+    });
+  })();
 
-  // Salvar atendimento no Firestore
+  // ── Seed: despesas fictícias de hoje ────────────────────────────
+  (function seedDespesas() {
+    var hoje = _todayISO();
+    var seeds = [
+      { hora: '08:05', descricao: 'Internet da loja', valor: 120.00, categoria: 'net_loja', obs: 'Mensalidade', tipo: 'manual' },
+      { hora: '09:40', descricao: 'Papel A4 (resma)', valor: 24.90, categoria: 'insumos', obs: 'Reposição de estoque interno', tipo: 'manual' },
+      { hora: '12:15', descricao: 'Almoço', valor: 18.00, categoria: 'almoco', obs: '', tipo: 'manual' }
+    ];
+    seeds.forEach(function (s) {
+      _dbDespesas.push(Object.assign({ docId: _uid('desp') }, s, {
+        data: hoje,
+        criadoEm: new Date().toISOString()
+      }));
+    });
+  })();
+
+  // ── Seed: clientes em andamento fictícios ───────────────────────
+  (function seedClientes() {
+    _dbClientes.push({
+      docId: _uid('cli'),
+      nome: 'João Silva',
+      telefone: '(00) 00000-0001',
+      criadoEm: new Date().toISOString(),
+      servicos: [
+        { descricao: 'Formatação de notebook', valor: 80.00, obs: 'Aguardando peça chegar', funcionario: 'Atendente A', pago: false, entregue: false }
+      ]
+    });
+    _dbClientes.push({
+      docId: _uid('cli'),
+      nome: 'Maria Souza',
+      telefone: '(00) 00000-0002',
+      criadoEm: new Date().toISOString(),
+      servicos: [
+        { descricao: 'Currículo + 5 cópias', valor: 25.00, obs: '', funcionario: 'Atendente B', pago: true, entregue: false }
+      ]
+    });
+  })();
+
+  // ════════════════════════════════════════════════════════════════
+  //  ATENDIMENTOS
+  // ════════════════════════════════════════════════════════════════
+
   async function salvarAtendimento(at) {
-    // Cria payload limpo (sem campos internos do site)
-    const payload = {
+    var payload = {
+      _docId: _uid('aten'),
       id: at.id,
       time: at.time,
       items: at.items,
@@ -44,122 +102,43 @@
       hora: at.hora,
       criadoEm: new Date().toISOString()
     };
-    const docRef = await addDoc(collection(db, "atendimentos"), payload);
-    at._docId = docRef.id;
-    console.log("Atendimento salvo no Firestore:", docRef.id);
-    return docRef.id;
+    _dbAtendimentos.push(payload);
+    at._docId = payload._docId;
+    return payload._docId;
   }
 
-  // Excluir atendimento do Firestore
   async function excluirAtendimento(docId) {
     if (!docId) throw new Error('docId vazio');
-    await deleteDoc(doc(db, "atendimentos", docId));
-    console.log("Atendimento excluído do Firestore:", docId);
+    _dbAtendimentos = _dbAtendimentos.filter(function (a) { return a._docId !== docId; });
     return true;
   }
 
-  // Carregar atendimentos por período (intervalo de datas ISO inclusive)
+  function _filtrarPeriodo(di, df) {
+    return _dbAtendimentos
+      .filter(function (a) { return a.data >= di && a.data <= df; })
+      .slice()
+      .sort(function (a, b) { return (a.data + a.hora).localeCompare(b.data + b.hora); });
+  }
+
   async function carregarAtendimentosPorPeriodo(dataInicioISO, dataFimISO) {
-    try {
-      const colRef = collection(db, "atendimentos");
-      const qRef = query(
-        colRef,
-        where("data", ">=", dataInicioISO),
-        where("data", "<=", dataFimISO),
-        orderBy("data", "asc"),
-        orderBy("hora", "asc")
-      );
-      const snap = await getDocs(qRef);
-      const lista = [];
-      snap.forEach(docSnap => {
-        const d = docSnap.data();
-        lista.push({
-          _docId: docSnap.id,
-          id: d.id || null,
-          time: d.time || d.hora || '--:--',
-          items: d.items || [],
-          total: d.total || 0,
-          data: d.data,
-          hora: d.hora,
-          criadoEm: d.criadoEm || null
-        });
-      });
-      return lista;
-    } catch (e) {
-      console.error("Erro ao carregar período:", e);
-      throw e;
-    }
+    return _filtrarPeriodo(dataInicioISO, dataFimISO);
   }
 
-  // Carregar TODOS atendimentos (para export geral)
   async function carregarTodosAtendimentos() {
-    try {
-      const colRef = collection(db, "atendimentos");
-      const qRef = query(colRef, orderBy("data", "asc"), orderBy("hora", "asc"));
-      const snap = await getDocs(qRef);
-      const lista = [];
-      snap.forEach(docSnap => {
-        const d = docSnap.data();
-        lista.push({
-          _docId: docSnap.id,
-          id: d.id || null,
-          time: d.time || d.hora || '--:--',
-          items: d.items || [],
-          total: d.total || 0,
-          data: d.data,
-          hora: d.hora,
-          criadoEm: d.criadoEm || null
-        });
-      });
-      return lista;
-    } catch (e) {
-      console.error("Erro ao carregar todos atendimentos:", e);
-      throw e;
-    }
+    return _filtrarPeriodo('0000-00-00', '9999-99-99');
   }
 
-// Carregar atendimentos do dia (por data ISO: "2026-05-13")
-// Carregar atendimentos do dia direto do Firestore,
-// retornando já no formato que o histórico usa (_atendimentos)
-async function carregarAtendimentosDoDia(dataISO) {
-    try {
-      const colRef = collection(db, "atendimentos");
-      const qRef = query(
-        colRef,
-        where("data", "==", dataISO),
-        orderBy("hora", "asc")
-      );
-      const snap = await getDocs(qRef);
-      const lista = [];
-      snap.forEach(docSnap => {
-        const d = docSnap.data();
-        lista.push({
-          _docId: docSnap.id,
-          id: d.id || null,
-          time: d.time || d.hora || '--:--',
-          items: d.items || [],
-          total: d.total || 0,
-          data: d.data,
-          hora: d.hora
-        });
-      });
-      console.log("Atendimentos do dia:", lista);
-      return lista;
-    } catch (e) {
-      console.error("Erro ao carregar atendimentos:", e);
-      return [];
-    }
+  async function carregarAtendimentosDoDia(dataISO) {
+    return _filtrarPeriodo(dataISO, dataISO);
   }
 
-// Ao abrir a página, busca atendimentos de hoje (data LOCAL) e preenche o histórico
-  window.addEventListener("load", async () => {
-    // data local (não UTC) — evita pular 1 dia no Brasil de madrugada
-    const d = new Date();
-    const dataISO = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
-    const listaFS = await carregarAtendimentosDoDia(dataISO);
+  // Replica o boot do Firebase real: ao carregar a página, busca os
+  // atendimentos já "salvos" de hoje e injeta no histórico do cart.js
+  window.addEventListener('load', async function () {
+    var dataISO = _todayISO();
+    var listaFS = await carregarAtendimentosDoDia(dataISO);
     if (listaFS.length > 0) {
-      // marca como já sincronizados
-      listaFS.forEach(a => { a._syncStatus = 'saved'; });
+      listaFS.forEach(function (a) { a._syncStatus = 'saved'; });
       _atendimentos = listaFS.concat(_atendimentos || []);
       var maxId = 0;
       for (var i = 0; i < _atendimentos.length; i++) {
@@ -171,43 +150,19 @@ async function carregarAtendimentosDoDia(dataISO) {
     }
   });
 
-  // Verifica a cada minuto se o dia mudou — se sim, limpa o histórico do site
-  // (o Firebase continua guardando tudo, mas o site mostra só o dia atual)
-  let _ultimaDataISO = (() => { const d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); })();
-  setInterval(() => {
-    const d = new Date();
-    const dataAgora = d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
-    if (dataAgora !== _ultimaDataISO) {
-      console.log('Dia mudou de', _ultimaDataISO, 'para', dataAgora, '— atualizando histórico');
-      _ultimaDataISO = dataAgora;
-      // re-renderiza (o filtro _atendimentosDoDia esconde automaticamente os de ontem)
-      if (typeof _renderHistory === 'function') _renderHistory();
-      if (typeof _updateDayTotal === 'function') _updateDayTotal();
-    }
-  }, 60000);
-
-  // ============================================================
-  // PRODUTOS / ESTOQUE (coleção: produtos)
-  // Documento ID = string do código do produto (codigo)
-  // ============================================================
+  // ════════════════════════════════════════════════════════════════
+  //  PRODUTOS / ESTOQUE
+  // ════════════════════════════════════════════════════════════════
 
   async function carregarProdutos() {
-    try {
-      const snap = await getDocs(query(collection(db, 'produtos'), orderBy('nome', 'asc')));
-      const lista = [];
-      snap.forEach(d => { lista.push({ _docId: d.id, ...d.data() }); });
-      return lista;
-    } catch (e) {
-      console.error('Erro carregarProdutos:', e);
-      return [];
-    }
+    return _dbProdutos.slice().sort(function (a, b) { return a.nome.localeCompare(b.nome); });
   }
 
   async function salvarProduto(prod) {
-    // prod = { codigo, nome, grupo, subgrupo, preco, unid, estoque, estoqueMinimo, ativo, origem }
     if (!prod.codigo) throw new Error('produto sem código');
-    const docId = String(prod.codigo);
-    const payload = {
+    var docId = String(prod.codigo);
+    var payload = {
+      _docId: docId,
       codigo: Number(prod.codigo),
       nome: String(prod.nome || '').trim(),
       grupo: String(prod.grupo || 'OUTROS').trim(),
@@ -220,23 +175,23 @@ async function carregarAtendimentosDoDia(dataISO) {
       origem: prod.origem || 'manual',
       atualizadoEm: new Date().toISOString()
     };
-    await setDoc(doc(db, 'produtos', docId), payload, { merge: true });
+    var idx = _dbProdutos.findIndex(function (p) { return p._docId === docId; });
+    if (idx >= 0) _dbProdutos[idx] = Object.assign({}, _dbProdutos[idx], payload);
+    else _dbProdutos.push(payload);
     return docId;
   }
 
   async function deletarProduto(codigo) {
-    await deleteDoc(doc(db, 'produtos', String(codigo)));
+    _dbProdutos = _dbProdutos.filter(function (p) { return String(p.codigo) !== String(codigo); });
   }
 
   async function entradaEstoque(codigo, quantidade, motivo) {
-    // Soma quantidade ao estoque (atomicamente)
-    const ref = doc(db, 'produtos', String(codigo));
-    await updateDoc(ref, {
-      estoque: increment(Number(quantidade)),
-      atualizadoEm: new Date().toISOString()
-    });
-    // Registra movimento de auditoria
-    await addDoc(collection(db, 'estoque_movimentos'), {
+    var prod = _dbProdutos.find(function (p) { return String(p.codigo) === String(codigo); });
+    if (prod) {
+      prod.estoque = (Number(prod.estoque) || 0) + Number(quantidade);
+      prod.atualizadoEm = new Date().toISOString();
+    }
+    _dbEstoqueMovimentos.push({
       codigo: Number(codigo),
       tipo: 'entrada',
       quantidade: Number(quantidade),
@@ -246,179 +201,197 @@ async function carregarAtendimentosDoDia(dataISO) {
   }
 
   async function baixaEstoque(codigo, quantidade, atendimentoId) {
-    // Subtrai quantidade do estoque (permite negativo — conforme decisão do usuário)
-    const ref = doc(db, 'produtos', String(codigo));
-    try {
-      await updateDoc(ref, {
-        estoque: increment(-Math.abs(Number(quantidade))),
-        atualizadoEm: new Date().toISOString()
-      });
-      await addDoc(collection(db, 'estoque_movimentos'), {
-        codigo: Number(codigo),
-        tipo: 'venda',
-        quantidade: Number(quantidade),
-        atendimentoId: atendimentoId || null,
-        em: new Date().toISOString()
-      });
-    } catch (e) {
-      // produto inexistente — ignora silenciosamente (serviços do governo não têm doc de produto)
-      if (e.code !== 'not-found') console.warn('baixaEstoque falhou:', e.message);
-    }
+    var prod = _dbProdutos.find(function (p) { return String(p.codigo) === String(codigo); });
+    if (!prod) return;
+    prod.estoque = (Number(prod.estoque) || 0) - Math.abs(Number(quantidade));
+    prod.atualizadoEm = new Date().toISOString();
+    _dbEstoqueMovimentos.push({
+      codigo: Number(codigo),
+      tipo: 'venda',
+      quantidade: Number(quantidade),
+      atendimentoId: atendimentoId || null,
+      em: new Date().toISOString()
+    });
   }
 
   async function importarProdutosEmLote(lista) {
-    // Importa em batches de 400 (limite Firestore: 500)
-    let total = 0;
-    for (let i = 0; i < lista.length; i += 400) {
-      const chunk = lista.slice(i, i + 400);
-      const batch = writeBatch(db);
-      chunk.forEach(p => {
-        const docId = String(p.codigo);
-        const ref = doc(db, 'produtos', docId);
-        batch.set(ref, {
-          codigo: Number(p.codigo),
-          nome: String(p.nome || '').trim(),
-          grupo: String(p.grupo || 'OUTROS').trim(),
-          subgrupo: String(p.subgrupo || '').trim(),
-          preco: Number(p.preco) || 0,
-          unid: String(p.unid || 'UN').trim(),
-          estoque: Number(p.estoque) || 0,
-          estoqueMinimo: Number(p.estoqueMinimo) || 0,
-          ativo: true,
-          origem: 'SMB',
-          atualizadoEm: new Date().toISOString()
-        }, { merge: true });
-      });
-      await batch.commit();
-      total += chunk.length;
-      console.log(`Importados ${total}/${lista.length} produtos`);
-    }
-    return total;
+    lista.forEach(function (p) {
+      var docId = String(p.codigo);
+      var payload = {
+        _docId: docId,
+        codigo: Number(p.codigo),
+        nome: String(p.nome || '').trim(),
+        grupo: String(p.grupo || 'OUTROS').trim(),
+        subgrupo: String(p.subgrupo || '').trim(),
+        preco: Number(p.preco) || 0,
+        unid: String(p.unid || 'UN').trim(),
+        estoque: Number(p.estoque) || 0,
+        estoqueMinimo: Number(p.estoqueMinimo) || 0,
+        ativo: true,
+        origem: 'SMB',
+        atualizadoEm: new Date().toISOString()
+      };
+      var idx = _dbProdutos.findIndex(function (x) { return x._docId === docId; });
+      if (idx >= 0) _dbProdutos[idx] = Object.assign({}, _dbProdutos[idx], payload);
+      else _dbProdutos.push(payload);
+    });
+    return lista.length;
   }
 
-  // ============================================================
-  // FECHAMENTO DE CAIXA (coleção: caixa_fechamentos)
-  // Documento ID = data ISO (ex: "2026-05-14")
-  // Substitui o localStorage — sincroniza entre todos os PCs
-  // ============================================================
+  // ════════════════════════════════════════════════════════════════
+  //  FECHAMENTO DE CAIXA
+  // ════════════════════════════════════════════════════════════════
 
   async function fecharCaixaFirebase(dataISO, info) {
-    const payload = {
+    var existente = _dbCaixaFechamentos[dataISO] || { data: dataISO };
+    var payload = Object.assign({}, existente, {
       data: dataISO,
       fechadoEm: new Date().toISOString(),
-      fechadoPor: (navigator.userAgent || '').slice(0, 100),
-      atendimentos: (info && info.atendimentos) || 0,
-      total: (info && info.total) || 0,
-      moeda: (info && info.moeda) || 0,
-      recolhido: (info && info.recolhido) || 0
-    };
-    await setDoc(doc(db, 'caixa_fechamentos', dataISO), payload, { merge: true });
+      fechadoPor: 'Demo',
+      atendimentos: (info && info.atendimentos !== undefined) ? info.atendimentos : (existente.atendimentos || 0),
+      total: (info && info.total !== undefined) ? info.total : (existente.total || 0),
+      moeda: (info && info.moeda !== undefined) ? info.moeda : (existente.moeda || 0),
+      recolhido: (info && info.recolhido !== undefined) ? info.recolhido : (existente.recolhido || 0)
+    });
+    _dbCaixaFechamentos[dataISO] = payload;
     return payload;
   }
 
   async function reabrirCaixaFirebase(dataISO) {
-    await deleteDoc(doc(db, 'caixa_fechamentos', dataISO));
+    delete _dbCaixaFechamentos[dataISO];
   }
 
   async function listarCaixaFechamentos(inicioISO, fimISO) {
-    try {
-      const qRef = query(
-        collection(db, 'caixa_fechamentos'),
-        where('data', '>=', inicioISO),
-        where('data', '<=', fimISO)
-      );
-      const snap = await getDocs(qRef);
-      const dias = [];
-      snap.forEach(d => dias.push(d.data().data));
-      return dias;
-    } catch (e) {
-      console.error('Erro listarCaixaFechamentos:', e);
-      return [];
-    }
+    return Object.keys(_dbCaixaFechamentos).filter(function (d) { return d >= inicioISO && d <= fimISO; });
   }
 
   async function caixaJaFechado(dataISO) {
-    try {
-      const snap = await getDoc(doc(db, 'caixa_fechamentos', dataISO));
-      return snap.exists();
-    } catch (e) { return false; }
-  }
-
-  // ============================================================
-  // DESPESAS (coleção: despesas)
-  // ============================================================
-
-  async function salvarDespesaFirebase(desp) {
-    const docRef = await addDoc(collection(db, 'despesas'), desp);
-    console.log('Despesa salva:', docRef.id);
-    return docRef.id;
-  }
-
-  async function atualizarDespesaFirebase(docId, dados) {
-    const ref = doc(db, 'despesas', docId);
-    const { docId: _, ...payload } = dados;
-    await updateDoc(ref, payload);
-    console.log('Despesa atualizada:', docId);
-  }
-
-  async function excluirDespesaFirebase(docId) {
-    await deleteDoc(doc(db, 'despesas', docId));
-    console.log('Despesa excluída:', docId);
-  }
-
-  async function carregarDespesasHoje(dataISO) {
-    try {
-      const q = query(
-        collection(db, 'despesas'),
-        where('data', '==', dataISO),
-        orderBy('criadoEm', 'desc')
-      );
-      const snap = await getDocs(q);
-      return snap.docs.map(d => ({ docId: d.id, ...d.data() }));
-    } catch (e) {
-      console.error('Erro ao carregar despesas:', e);
-      return [];
-    }
+    return !!_dbCaixaFechamentos[dataISO];
   }
 
   async function buscarFechamentoPorData(dataISO) {
-    try {
-      const snap = await getDoc(doc(db, 'caixa_fechamentos', dataISO));
-      if (snap.exists()) return snap.data();
-      return null;
-    } catch (e) {
-      console.error('Erro ao buscar fechamento:', e);
-      return null;
+    return _dbCaixaFechamentos[dataISO] || null;
+  }
+
+  async function carregarCaixaFechado() {
+    return null;
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  DESPESAS
+  // ════════════════════════════════════════════════════════════════
+
+  async function salvarDespesaFirebase(desp) {
+    var docId = _uid('desp');
+    _dbDespesas.unshift(Object.assign({ docId: docId }, desp));
+    return docId;
+  }
+
+  async function atualizarDespesaFirebase(docId, dados) {
+    var idx = _dbDespesas.findIndex(function (d) { return d.docId === docId; });
+    if (idx >= 0) {
+      var payload = Object.assign({}, dados);
+      delete payload.docId;
+      _dbDespesas[idx] = Object.assign({}, _dbDespesas[idx], payload);
     }
   }
 
-  try {
-    window.salvarAtendimento = salvarAtendimento;
-    window.excluirAtendimento = excluirAtendimento;
-    window.carregarAtendimentosDoDia = carregarAtendimentosDoDia;
-    window.carregarAtendimentosPorPeriodo = carregarAtendimentosPorPeriodo;
-    window.carregarTodosAtendimentos = carregarTodosAtendimentos;
-    // Produtos / estoque
-    window.carregarProdutos = carregarProdutos;
-    window.salvarProduto = salvarProduto;
-    window.deletarProduto = deletarProduto;
-    window.entradaEstoque = entradaEstoque;
-    window.baixaEstoque = baixaEstoque;
-    window.importarProdutosEmLote = importarProdutosEmLote;
-    window.db = db;
-    window.getDoc = getDoc;
-    window.doc = doc;
-    window.salvarDespesaFirebase    = salvarDespesaFirebase;
-    window.atualizarDespesaFirebase = atualizarDespesaFirebase;
-    window.excluirDespesaFirebase   = excluirDespesaFirebase;
-    window.carregarDespesasHoje     = carregarDespesasHoje;
-    // Fechamento caixa
-    window.fecharCaixaFirebase = fecharCaixaFirebase;
-    window.reabrirCaixaFirebase = reabrirCaixaFirebase;
-    window.listarCaixaFechamentos = listarCaixaFechamentos;
-    window.caixaJaFechado = caixaJaFechado;
-    window.buscarFechamentoPorData    = buscarFechamentoPorData;
-    console.log('Funções Firestore expostas em window');
-  } catch (e) {
-    console.error('Erro ao expor funções no window:', e);
+  async function excluirDespesaFirebase(docId) {
+    _dbDespesas = _dbDespesas.filter(function (d) { return d.docId !== docId; });
   }
+
+  async function carregarDespesasHoje(dataISO) {
+    return _dbDespesas.filter(function (d) { return d.data === dataISO; });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  CLIENTES EM ANDAMENTO
+  // ════════════════════════════════════════════════════════════════
+
+  async function salvarClienteFirebase(cliente) {
+    var docId = _uid('cli');
+    _dbClientes.unshift(Object.assign({ docId: docId }, cliente));
+    return docId;
+  }
+
+  async function atualizarClienteFirebase(docId, dados) {
+    var idx = _dbClientes.findIndex(function (c) { return c.docId === docId; });
+    if (idx >= 0) {
+      var payload = Object.assign({}, dados);
+      delete payload.docId;
+      _dbClientes[idx] = Object.assign({}, _dbClientes[idx], payload);
+    }
+  }
+
+  async function excluirClienteFirebase(docId) {
+    _dbClientes = _dbClientes.filter(function (c) { return c.docId !== docId; });
+  }
+
+  async function carregarClientesAtivos() {
+    return _dbClientes.slice().sort(function (a, b) { return (b.criadoEm || '').localeCompare(a.criadoEm || ''); });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  FUNCIONÁRIOS / SERVIÇOS
+  //  (sem telas que os usem nesta demo — mantidos só para compatibilidade de API)
+  // ════════════════════════════════════════════════════════════════
+
+  async function autenticarFuncionario() { return null; }
+  async function listarFuncionarios() { return []; }
+  async function salvarFuncionario(nome) {
+    return String(nome || '').toLowerCase().trim().replace(/\s+/g, '_');
+  }
+  async function atualizarStatusFuncionario() {}
+  async function trocarSenhaFuncionario() {}
+  async function carregarServicosFirebase() { return null; } // null = usa data.js como fallback
+  async function salvarServico(dados, docId) { return docId || _uid('srv'); }
+  async function removerServico() {}
+
+  // ════════════════════════════════════════════════════════════════
+  //  EXPOSIÇÃO GLOBAL
+  // ════════════════════════════════════════════════════════════════
+
+  window.db = {}; // placeholder truthy — só para checagens "if (window.db && ...)"
+
+  window.salvarAtendimento = salvarAtendimento;
+  window.excluirAtendimento = excluirAtendimento;
+  window.carregarAtendimentosDoDia = carregarAtendimentosDoDia;
+  window.carregarAtendimentosPorPeriodo = carregarAtendimentosPorPeriodo;
+  window.carregarTodosAtendimentos = carregarTodosAtendimentos;
+
+  window.carregarProdutos = carregarProdutos;
+  window.salvarProduto = salvarProduto;
+  window.deletarProduto = deletarProduto;
+  window.entradaEstoque = entradaEstoque;
+  window.baixaEstoque = baixaEstoque;
+  window.importarProdutosEmLote = importarProdutosEmLote;
+
+  window.fecharCaixaFirebase = fecharCaixaFirebase;
+  window.reabrirCaixaFirebase = reabrirCaixaFirebase;
+  window.listarCaixaFechamentos = listarCaixaFechamentos;
+  window.caixaJaFechado = caixaJaFechado;
+  window.buscarFechamentoPorData = buscarFechamentoPorData;
+  window.carregarCaixaFechado = carregarCaixaFechado;
+
+  window.salvarDespesaFirebase = salvarDespesaFirebase;
+  window.atualizarDespesaFirebase = atualizarDespesaFirebase;
+  window.excluirDespesaFirebase = excluirDespesaFirebase;
+  window.carregarDespesasHoje = carregarDespesasHoje;
+
+  window.salvarClienteFirebase = salvarClienteFirebase;
+  window.atualizarClienteFirebase = atualizarClienteFirebase;
+  window.excluirClienteFirebase = excluirClienteFirebase;
+  window.carregarClientesAtivos = carregarClientesAtivos;
+
+  window._autenticarFuncionario = autenticarFuncionario;
+  window._listarFuncionarios = listarFuncionarios;
+  window._salvarFuncionario = salvarFuncionario;
+  window._atualizarStatusFuncionario = atualizarStatusFuncionario;
+  window._trocarSenhaFuncionario = trocarSenhaFuncionario;
+  window._carregarServicosFirebase = carregarServicosFirebase;
+  window._salvarServico = salvarServico;
+  window._removerServico = removerServico;
+
+  console.log('[DEMO] Firebase simulado em memória. Dados resetam ao recarregar.');
+
+})();

@@ -1,16 +1,16 @@
 /* ===========================
-   ALIANÇA — ADMIN
+   PDV DEMO — ADMIN
    =========================== */
 
 // ════════════════════════════════════════════════════════════════
-//  SISTEMA DE CONTROLE DE ACESSO — Aliança Informática v3.1
+//  SISTEMA DE CONTROLE DE ACESSO — PDV Demo v3.3
 //  F5 sempre desloga • Total/Histórico/PDF ocultos sem senha
 // ════════════════════════════════════════════════════════════════
 (function () {
   'use strict';
 
   // ── CONFIGURAÇÃO ──────────────────────────────────────────────
-  // Hash SHA-256 da senha padrão: alianca2025
+  // Hash SHA-256 da senha padrão: admin123
   // Para trocar: https://emn178.github.io/online-tools/sha256.html
   // Digite a nova senha, copie o hash e cole aqui abaixo:
   const ADMIN_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9' // SHA-256 de 'admin123' — gere o seu em: https://emn178.github.io/online-tools/sha256.html;
@@ -283,7 +283,7 @@
 
     // Atualiza botões PDF/Gráfico após patch
     updatePdfGraficoBtns();
-    console.log('[AdminPatch v3.1] ✅ Funções protegidas aplicadas.');
+    console.log('[AdminPatch v3.3] ✅ Funções protegidas aplicadas.');
   }
 
   // ── OBSERVAR MUDANÇA DE ABA (Caixa → Histórico) ──────────────

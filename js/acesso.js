@@ -1,11 +1,11 @@
 /* ===========================
-   ALIANÇA — ACESSO (senha de entrada)
+   PDV DEMO — ACESSO (senha de entrada)
    Expira em 8h ou ao fechar o navegador
    =========================== */
 
 (function () {
   var SENHA = 'demo123';
-  var CHAVE = 'alianca_acesso_v1';
+  var CHAVE = 'pdvdemo_acesso_v1';
   var DURACAO = 8 * 60 * 60 * 1000; // 8 horas em ms
 
   function acessoValido() {
@@ -44,7 +44,7 @@
 
         // Título
         '<div style="text-align:center">',
-          '<div style="font-size:1.25rem;font-weight:700;color:#28251d;letter-spacing:-.01em">Aliança Serviços</div>',
+          '<div style="font-size:1.25rem;font-weight:700;color:#28251d;letter-spacing:-.01em">PDV Demo</div>',
           '<div style="font-size:.85rem;color:#7a7974;margin-top:4px">Digite a senha para continuar</div>',
         '</div>',
 

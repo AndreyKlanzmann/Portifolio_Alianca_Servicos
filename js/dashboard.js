@@ -1,15 +1,15 @@
 /* ===========================
-   ALIANÇA — DASHBOARD
+   PDV DEMO — DASHBOARD
    =========================== */
 
 /* ============================================================
-   DASHBOARD + TELEGRAM — Aliança v2.6
+   DASHBOARD + TELEGRAM — PDV Demo v3.3
    ============================================================ */
 
-const TG_KEY = 'alianca_tg_config_v1';
-const TG_SENT_KEY = 'alianca_tg_sent_log_v1';
-const LEMBRETE_KEY = 'alianca_lembrete_config_v1';
-const BANNER_DISMISS_KEY = 'alianca_banner_dismiss_v1';
+const TG_KEY = 'pdvdemo_tg_config_v1';
+const TG_SENT_KEY = 'pdvdemo_tg_sent_log_v1';
+const LEMBRETE_KEY = 'pdvdemo_lembrete_config_v1';
+const BANNER_DISMISS_KEY = 'pdvdemo_banner_dismiss_v1';
 let _dashChartLinha = null, _dashChartTop = null;
 let _dashPeriodo = 'today';
 let _dashData = [];
@@ -69,7 +69,7 @@ async function _tgTest() {
   }
   msg.textContent = 'Enviando teste...'; msg.style.color = '#666';
   try {
-    const r = await _tgSend('🧪 *Teste Aliança Informática*\n\nSe você está vendo isso, a configuração está perfeita.', { token, chatId });
+    const r = await _tgSend('🧪 *Teste PDV Demo*\n\nSe você está vendo isso, a configuração está perfeita.', { token, chatId });
     if (r.ok) { msg.textContent = '✓ Mensagem enviada! Confere seu Telegram'; msg.style.color = '#28a745'; }
     else { msg.textContent = '❌ Erro: ' + (r.description || 'verifique TOKEN/CHAT ID e mande "oi" pro bot primeiro'); msg.style.color = '#dc3545'; }
   } catch (e) {
@@ -272,7 +272,7 @@ function _gerarResumoTexto(titulo, di, df, data) {
     const melhor = ag.dias.reduce((m, d) => ag.porDia[d].fat > ag.porDia[m].fat ? d : m, ag.dias[0]);
     txt += `\n📅 Melhor dia: *${_ddmm(melhor)}* (${_brlSimples(ag.porDia[melhor].fat)})`;
   }
-  txt += `\n\n_Aliança Informática · PDV v3.0_`;
+  txt += `\n\n_PDV Demo v3.3_`;
   return txt;
 }
 
@@ -329,7 +329,7 @@ async function abrirFecharCaixaAvancado() {
     const hoje = _hojeISO();
     const log = _getSentLog();
     // v3.0: combina local + Firebase cache
-    const cacheFB = JSON.parse(localStorage.getItem('alianca_caixa_fb_cache_v1') || '{"dias":[]}');
+    const cacheFB = JSON.parse(localStorage.getItem('pdvdemo_caixa_cache_v1') || '{"dias":[]}');
     const diasFechados = Array.from(new Set([...(log.day || []), ...cacheFB.dias]));
 
     // Lista todos os dias com atendimentos
@@ -497,7 +497,7 @@ function _abrirImpressaoFechamento(dados) {
   win.document.write('.total-box{background:#000;color:#fff;padding:4px 8px;border-radius:3px;display:flex;justify-content:space-between;margin:4px 0}');
   win.document.write('@media print{button{display:none}}');
   win.document.write('</style></head><body>');
-  win.document.write('<div class="center bold" style="font-size:13px;margin-bottom:2px">ALIANCA INFORMATICA</div>');
+  win.document.write('<div class="center bold" style="font-size:13px;margin-bottom:2px">PDV DEMO</div>');
   win.document.write('<div class="center" style="font-size:9px;color:#555;margin-bottom:4px">Fechamento de Caixa</div>');
   win.document.write('<hr class="line">');
   win.document.write('<div class="row"><span class="label">Data:</span><span class="val">' + dataFmt + '</span></div>');
@@ -533,7 +533,7 @@ async function _verificarPendencias() {
     const ini = _isoMinusDias(7);  // 7 dias atrás
     const data = await window.carregarAtendimentosPorPeriodo(ini, fim);
     const log = _getSentLog();
-    const cacheFB = JSON.parse(localStorage.getItem('alianca_caixa_fb_cache_v1') || '{"dias":[]}');
+    const cacheFB = JSON.parse(localStorage.getItem('pdvdemo_caixa_cache_v1') || '{"dias":[]}');
     const fechados = Array.from(new Set([...(log.day || []), ...cacheFB.dias]));
     const porDia = {};
     data.forEach(a => {
@@ -604,7 +604,7 @@ async function _verificarLembrete() {
 
   // verifica se hoje já foi fechado (local OU Firebase)
   const log = _getSentLog();
-  const cacheFB = JSON.parse(localStorage.getItem('alianca_caixa_fb_cache_v1') || '{"dias":[]}');
+  const cacheFB = JSON.parse(localStorage.getItem('pdvdemo_caixa_cache_v1') || '{"dias":[]}');
   if ((log.day || []).includes(_hojeISO()) || cacheFB.dias.includes(_hojeISO())) return;
 
   // tem atendimentos hoje?
@@ -612,7 +612,7 @@ async function _verificarLembrete() {
     const data = await window.carregarAtendimentosPorPeriodo(_hojeISO(), _hojeISO());
     if (data.length === 0) return; // dia vazio, sem necessidade de lembrar
     const total = data.reduce((s,a) => s + (a.total || 0), 0);
-    const txt = `🔔 *Lembrete — Aliança*\n\nVocê ainda não fechou o caixa de hoje (${_ddmmaaaa(_hojeISO())}).\n\n💰 Total até agora: *${_brlSimples(total)}*\n🎯 Atendimentos: ${data.length}\n\n_Abra o site e clique em "Fechar Caixa do Dia" pra encerrar._`;
+    const txt = `🔔 *Lembrete — PDV Demo*\n\nVocê ainda não fechou o caixa de hoje (${_ddmmaaaa(_hojeISO())}).\n\n💰 Total até agora: *${_brlSimples(total)}*\n🎯 Atendimentos: ${data.length}\n\n_Abra o site e clique em "Fechar Caixa do Dia" pra encerrar._`;
     const r = await _tgSend(txt);
     if (r.ok) { _marcarEnviado('lembrete', hojeKey); console.log('Lembrete enviado:', hojeKey); }
   } catch (e) { console.error('Falha lembrete:', e); }
@@ -633,9 +633,9 @@ function _marcarEnviado(tipo, chave) {
   if (tipo === 'day' && window.fecharCaixaFirebase) {
     // Atualiza cache local imediatamente (UI instantânea)
     try {
-      const cache = JSON.parse(localStorage.getItem('alianca_caixa_fb_cache_v1') || '{"dias":[]}');
+      const cache = JSON.parse(localStorage.getItem('pdvdemo_caixa_cache_v1') || '{"dias":[]}');
       if (!cache.dias.includes(chave)) cache.dias.push(chave);
-      localStorage.setItem('alianca_caixa_fb_cache_v1', JSON.stringify(cache));
+      localStorage.setItem('pdvdemo_caixa_cache_v1', JSON.stringify(cache));
     } catch (e) {}
     // Persiste em Firestore (assincrono — não trava UI)
     (async () => {
@@ -660,7 +660,7 @@ async function _sincronizarCacheCaixaFirebase() {
     const fim = _hojeISO();
     const ini = _isoMinusDias(30);
     const dias = await window.listarCaixaFechamentos(ini, fim);
-    localStorage.setItem('alianca_caixa_fb_cache_v1', JSON.stringify({ dias, atualizadoEm: Date.now() }));
+    localStorage.setItem('pdvdemo_caixa_cache_v1', JSON.stringify({ dias, atualizadoEm: Date.now() }));
     try { _updateCaixaStatusBadge(); } catch(e){}
     return dias;
   } catch (e) { console.warn('Falha sincronizar cache caixa:', e); return null; }
@@ -756,7 +756,7 @@ async function _verificarAgendamentos() {
     });
     // Sincroniza badge entre abas
     window.addEventListener('storage', function(ev){
-      if (ev.key === 'alianca_tg_sent_log_v1') _updateCaixaStatusBadge();
+      if (ev.key === 'pdvdemo_tg_sent_log_v1') _updateCaixaStatusBadge();
     });
   }
   if (document.readyState === 'complete') _onReady();

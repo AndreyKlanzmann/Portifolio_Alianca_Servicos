@@ -1,5 +1,5 @@
 /* ===========================
-   ALIANÇA — CART
+   PDV DEMO — CART
    =========================== */
 
 // ============ DETAIL MODAL ============
@@ -121,7 +121,7 @@ var PASSOS = {
 function buildShareMsg(name, price) {
   var d = (typeof SVC_LOOKUP !== 'undefined' && SVC_LOOKUP[name]) ? SVC_LOOKUP[name] : {};
   var pedir = d.pedir || '';
-  var msg = '\uD83C\uDFEA *Aliança Serviços*\n\n';
+  var msg = '\uD83C\uDFEA *PDV Demo*\n\n';
   msg += '\uD83D\uDCCB *Serviço:* ' + name + '\n';
   msg += '\uD83D\uDCB0 *Valor:* ' + price + '\n';
   if (pedir) msg += '\uD83D\uDCCE *O que precisamos:* ' + pedir + '\n';

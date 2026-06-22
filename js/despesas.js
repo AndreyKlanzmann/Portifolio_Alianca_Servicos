@@ -1,5 +1,5 @@
 /* ===========================
-   ALIANÇA — DESPESAS
+   PDV DEMO — DESPESAS
    Requer: admin.js, firebase.js, cart.js (showToast, _brl, _todayISO)
    =========================== */
 
